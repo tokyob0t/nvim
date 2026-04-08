@@ -2,7 +2,7 @@ return {
     'SmiteshP/nvim-navic',
     dependencies = { 'nyoom-engineering/oxocarbon.nvim' },
     lazy = false,
-    _init = function()
+    init = function()
         local oxocarbon = require('oxocarbon').oxocarbon
 
         local set = function(name, color)
@@ -44,12 +44,13 @@ return {
         set('NavicIconsEvent', oxocarbon.base12)
         set('NavicIconsOperator', oxocarbon.base11)
         set('NavicIconsTypeParameter', oxocarbon.base08)
+        vim.api.nvim_set_hl(0, 'WinBar', { bg = oxocarbon.base00 })
+        -- vim.api.nvim_set_hl(0, 'WinBarNC', { fg = '#aaaaaa', bg = '#1e1e1e' })
     end,
     opts = {
         lsp = { auto_attach = true },
         icons = KindIcons,
         separator = '  ',
-        highlight = 'dynamic',
-        -- highlight = 'static', -- true | 'static' | 'dynamic'
+        highlight = true,
     },
 }

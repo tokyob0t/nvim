@@ -22,17 +22,29 @@ return {
     'nvim-lualine/lualine.nvim',
     dependencies = {
         'nvim-tree/nvim-tree.lua',
+        'SmiteshP/nvim-navic',
     },
     event = 'VeryLazy',
+    init = function()
+        vim.opt.showtabline = 0
+
+        vim.api.nvim_create_autocmd({ 'BufEnter', 'TabEnter' }, {
+            callback = function()
+                local count = #vim.fn.getbufinfo({ buflisted = 1 })
+
+                vim.opt.showtabline = (count >= 2) and 2 or 0
+            end,
+        })
+    end,
     opts = {
         options = {
             icons_enabled = true,
-            theme = 'auto',
+            theme = 'oxocarbon',
             component_separators = { left = '', right = '' },
             section_separators = { left = '', right = '' },
             ignore_focus = {},
             always_divide_middle = false,
-            -- globalstatus = false,
+            globalstatus = true,
             disabled_filetypes = {
                 tabline = {
                     'NvimTree',
@@ -43,10 +55,15 @@ return {
                     'Telescope',
                     'dashboard',
                 },
-                'NvimTree',
-                'TelescopePrompt',
-                'packer',
-                'toggleterm',
+                winbar = {
+                    'NvimTree',
+                    'NvimTree_1',
+                    'TelescopePrompt',
+                    'Alpha',
+                    'alpha',
+                    'Telescope',
+                    'dashboard',
+                },
             },
         },
         sections = {
@@ -87,7 +104,6 @@ return {
             lualine_x = {},
             lualine_z = {},
         },
-        inactive_sections = {},
         tabline = {
             lualine_b = {
                 {
@@ -107,8 +123,6 @@ return {
                     cond = function()
                         return require('nvim-tree.view').is_visible()
                     end,
-                    -- color = { fg = 'Comment' },
-                    color = 'NvimTreeNormal',
                 },
                 {
                     'buffers',
@@ -145,7 +159,6 @@ return {
         },
         winbar = {
             lualine_b = {
-
                 {
                     'filetype',
                     colored = true,
@@ -168,7 +181,9 @@ return {
                         local filename = vim.fn.expand('%:t:r')
                         return filename ~= '' and '' or ''
                     end,
+                    -- color = 'Comment',
                 },
+                { 'navic' },
             },
             inactive_winbar = {},
             extensions = {},
