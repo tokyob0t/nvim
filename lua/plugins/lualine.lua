@@ -26,8 +26,6 @@ return {
     },
     event = 'VeryLazy',
     init = function()
-        vim.opt.showtabline = 0
-
         vim.api.nvim_create_autocmd({ 'BufEnter', 'TabEnter' }, {
             callback = function()
                 local count = #vim.fn.getbufinfo({ buflisted = 1 })

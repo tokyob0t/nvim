@@ -11,6 +11,7 @@ diagnostic.config({
 
 globals.loaded_netrw = 1
 
+options.showtabline = 0
 options.conceallevel = 2
 options.undofile = true
 options.cursorline = true
