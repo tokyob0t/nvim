@@ -22,10 +22,14 @@ return {
             javascript = { 'biome' },
             toml = { 'taplo' },
             typescript = { 'biome' },
+            xml = { 'xmlformatter' },
+            kdl = { 'kdlfmt' },
             -- tsx = { 'biome' },
             json = { 'biome' },
             sass = { 'prettierd' },
             scss = { 'prettierd' },
+            css = { 'prettierd' },
+            html = { 'prettierd' },
             nix = { 'nixpkgs-fmt', 'nixfmt' },
             sh = { 'beautysh' },
             sql = { 'sqlfmt', 'sleek' },
@@ -36,6 +40,12 @@ return {
                 'goimports-reviser',
                 'gomodifytags',
             },
+        },
+        formatters = {
+            kdlfmt = {
+                append_args = { '--kdl-version', 'v1' },
+            },
+            -- fnlfmt = {}
         },
         format_after_save = function(bufnr)
             if vim.b[bufnr].disable_autoformat then

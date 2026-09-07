@@ -8,9 +8,11 @@ local servers = {
     'biome',
     'biome',
     'emmet_language_server',
-    'somesass_ls', -- CSS/SCSS
+    -- 'somesass_ls', -- CSS/SCSS
+    'cssls',
     'bashls', -- Bash
-    'lua_ls', -- Lua
+    --'lua_ls', -- Lua
+    'emmylua_ls',
     'fennel_ls',
     'rust_analyzer', -- Rust
     'perlpls', -- Perl
@@ -24,7 +26,7 @@ local servers = {
     'blueprint_ls', -- Blueprint
     'taplo', -- TOML
     'pasls',
-    'sqlls', -- SQL
+    'sqls', -- SQL
     'postgres_lsp',
     'r_language_server',
     'gopls', -- Go
@@ -43,10 +45,8 @@ return {
         capabilities.textDocument.completion.completionItem.snippetSupport =
             true
 
-        capabilities.textDocument.foldingRange = {
-            dynamicRegistration = false,
-            lineFoldingOnly = true,
-        }
+        capabilities.textDocument.foldingRange =
+            { dynamicRegistration = false, lineFoldingOnly = true }
 
         local opts = {
             capabilities = capabilities,

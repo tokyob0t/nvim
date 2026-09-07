@@ -165,6 +165,7 @@ return {
                     padding = { left = 4, right = 0 },
                     fmt = function(_)
                         local filename = vim.fn.expand('%:t:r')
+
                         if filename ~= '' then
                             return ' ' .. filename
                         else
