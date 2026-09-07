@@ -1,9 +1,13 @@
 return {
     'SmiteshP/nvim-navic',
-    dependencies = { 'nyoom-engineering/oxocarbon.nvim' },
+    dependencies = { 'tokyob0t/oxocarbon.nvim' },
     lazy = false,
     init = function()
         local oxocarbon = require('oxocarbon').oxocarbon
+
+        if not oxocarbon then
+            return
+        end
 
         local set = function(name, color)
             vim.api.nvim_set_hl(0, name, { default = true, fg = color })

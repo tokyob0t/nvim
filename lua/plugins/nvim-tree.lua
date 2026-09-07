@@ -4,6 +4,10 @@ return {
     dependencies = {
         'nvim-tree/nvim-web-devicons',
     },
+
+    keys = {
+        { '<leader>e', '<cmd>NvimTreeToggle<cr>' },
+    },
     opts = {
         view = {
             side = 'left',
@@ -21,8 +25,5 @@ return {
         git = { enable = false },
         hijack_directories = { enable = true, auto_open = true },
         actions = { open_file = { resize_window = true } },
-    },
-    keys = {
-        { '<leader>e', '<cmd>NvimTreeToggle<cr>' },
     },
 }
