@@ -1,3 +1,5 @@
+local options = vim.opt
+
 local function getKindIconText(ctx)
     local devicons = require('nvim-web-devicons')
 
@@ -6,7 +8,7 @@ local function getKindIconText(ctx)
     end
 
     return ctx.kind_icon .. ctx.icon_gap
-    -- return KindIcons[ctx.kind] .. ctx.icon_gap
+    -- return KIND_ICONS[ctx.kind] .. ctx.icon_gap
 end
 
 local function getKindIconHighlight(ctx)
@@ -29,14 +31,15 @@ return {
     -- build = 'cargo build --release',
     dependencies = {
         'rafamadriz/friendly-snippets',
-        -- 'hrsh7th/cmp-cmdline',
+        'nvim-tree/nvim-web-devicons',
+
         -- 'L3MON4D3/LuaSnip',
         -- 'saadparwaiz1/cmp_luasnip',
         -- 'hrsh7th/cmp-nvim-lsp-signature-help'
     },
-
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
+    init = function()
+        options.completeopt = { 'menu', 'menuone', 'noselect' }
+    end,
     opts = {
         keymap = {
             preset = 'enter',
@@ -45,7 +48,7 @@ return {
         },
         appearance = {
             nerd_font_variant = 'mono',
-            kind_icons = KindIcons,
+            kind_icons = KIND_ICONS,
             -- highlight_ns = vim.api.nvim_create_namespace('blink_cmp'),
         },
 
@@ -56,7 +59,7 @@ return {
         fuzzy = { implementation = 'lua' },
 
         completion = {
-            documentation = { auto_show = true, auto_show_delay_ms = 1500 },
+            documentation = { auto_show = true },
             ghost_text = { enabled = true, show_without_selection = true },
             list = { selection = { preselect = false } },
             menu = {

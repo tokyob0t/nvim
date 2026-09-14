@@ -2,6 +2,10 @@ local parsers = {
     'lua',
     'python',
     'vim',
+    'html',
+    'html_tags',
+    'javascript',
+    'css',
     'scss',
     'vimdoc',
     'bash',
@@ -20,17 +24,17 @@ local parsers = {
 return {
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',
+    lazy = false,
     build = ':TSUpdate',
     config = function()
         local ts = require('nvim-treesitter')
 
-        for _, parser in ipairs(parsers) do
-            pcall(ts.install, parser)
-        end
+        ts.install(parsers):wait(300000)
 
         vim.api.nvim_create_autocmd('FileType', {
+            pattern = { '<filetype>' },
             callback = function()
-                pcall(vim.treesitter.start)
+                vim.treesitter.start()
             end,
         })
     end,

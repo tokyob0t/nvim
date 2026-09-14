@@ -1,6 +1,6 @@
 return {
     'SmiteshP/nvim-navic',
-    dependencies = { 'tokyob0t/oxocarbon.nvim' },
+    dependencies = { 'nyoom-engineering/oxocarbon.nvim' },
     lazy = false,
     init = function()
         local oxocarbon = require('oxocarbon').oxocarbon
@@ -53,7 +53,7 @@ return {
     end,
     opts = {
         lsp = { auto_attach = true },
-        icons = KindIcons,
+        icons = KIND_ICONS,
         separator = '  ',
         highlight = true,
     },

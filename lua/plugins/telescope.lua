@@ -12,7 +12,7 @@ return {
             sorting_strategy = 'ascending',
             layout_strategy = 'flex',
             set_env = { COLORTERM = 'truecolor' },
-            dynamic_preview_title = 'layout_config',
+            dynamic_preview_title = true,
             layout_config = {
                 horizontal = { prompt_position = 'top', preview_width = 0.55 },
                 vertical = { mirror = false },

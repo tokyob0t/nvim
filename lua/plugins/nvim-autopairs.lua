@@ -1,5 +1,16 @@
 return {
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
-    config = true,
+    -- config = true,
+    opts = {
+        disable_filetype = {
+            'TelescopePrompt',
+            'vim',
+            'fennel',
+            'clojure',
+            'lisp',
+            'racket',
+            'scheme',
+        },
+    },
 }

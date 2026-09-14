@@ -1,0 +1,19 @@
+local Mode = require('plugins.heirline-modules.mode')
+local CurrentFile = require('plugins.heirline-modules.current-file')
+
+return {
+    'rebelot/heirline.nvim',
+    dependencies = { 'nyoom-engineering/oxocarbon.nvim' },
+    event = 'UiEnter',
+    opts = {
+        statusline = {
+            condition = function()
+                return not require('heirline.conditions').buffer_matches {
+                    filetype = { 'NvimTree_1' },
+                }
+            end,
+            Mode {},
+            CurrentFile {},
+        },
+    },
+}

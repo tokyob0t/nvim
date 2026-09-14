@@ -1,5 +1,5 @@
 return {
-    'tokyob0t/oxocarbon.nvim',
+    'nyoom-engineering/oxocarbon.nvim',
     build = false,
     config = function()
         vim.cmd.colorscheme('oxocarbon')

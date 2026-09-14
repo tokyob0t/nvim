@@ -1,7 +1,7 @@
 return {
     'stevearc/conform.nvim',
-    event = { 'BufWritePre' },
-    cmd = { 'ConformInfo' },
+    event = 'BufWritePre',
+    cmd = 'ConformInfo',
     init = function()
         vim.api.nvim_create_user_command('ToggleFormat', function()
             local global_state = vim.g.disable_autoformat

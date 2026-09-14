@@ -1,8 +1,9 @@
 return {
     'folke/trouble.nvim',
+
     opts = {
         icons = {
-            kinds = KindIcons,
+            kinds = KIND_ICONS,
         },
     },
 }

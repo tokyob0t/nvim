@@ -1,0 +1,2 @@
+require(... .. '.diagnostic')
+require(... .. '.fold')

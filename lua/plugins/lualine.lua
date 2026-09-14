@@ -1,22 +1,4 @@
-local VIM_MODES = {
-    NORMAL = 'RW',
-    ['O-PENDING'] = 'RO',
-    VISUAL = '**',
-    ['V-LINE'] = '**',
-    ['V-BLOCK'] = '**',
-    s = 'S',
-    S = 'SL',
-    INSERT = '**',
-    ic = '**',
-    REPLACE = 'RA',
-    ['V-REPLACE'] = 'RV',
-    COMMAND = 'VIEX',
-    READ = 'r',
-    rm = 'r',
-    ['r?'] = 'r',
-    ['!'] = '!',
-    TERMINAL = '',
-}
+local options = vim.opt
 
 return {
     'nvim-lualine/lualine.nvim',
@@ -26,11 +8,13 @@ return {
     },
     event = 'VeryLazy',
     init = function()
+        options.showtabline = 0
+
         vim.api.nvim_create_autocmd({ 'BufEnter', 'TabEnter' }, {
             callback = function()
                 local count = #vim.fn.getbufinfo({ buflisted = 1 })
 
-                vim.opt.showtabline = (count >= 2) and 2 or 0
+                options.showtabline = (count >= 2) and 2 or 0
             end,
         })
     end,
@@ -81,7 +65,7 @@ return {
                     symbols = {
                         modified = '',
                         readonly = '',
-                        unnamed = '',
+                        unnamed = '',
                     },
                 },
                 {
@@ -94,7 +78,7 @@ return {
                 },
             },
             lualine_y = {
-                { 'diagnostics', icons_enabled = false },
+                { 'diagnostics', icons_enabled = true },
                 { 'filetype', icons_enabled = false },
                 { 'location' },
             },
@@ -114,9 +98,7 @@ return {
                         local left = (len - #title) / 2
                         local right = len - left - #title
 
-                        return string.rep(' ', left)
-                            .. title
-                            .. string.rep(' ', right)
+                        return string.rep(' ', left) .. title .. string.rep(' ', right)
                     end,
                     cond = function()
                         return require('nvim-tree.view').is_visible()

@@ -1,9 +1,8 @@
 local os_name = vim.loop.os_uname().sysname
-local lazypath
 
-if vim.env.LAZY_PATH then
-    lazypath = vim.env.LAZY_PATH
-else
+local lazypath = vim.env.LAZY_PATH
+
+if not lazypath then
     if string.find(os_name, 'Windows') then
         lazypath = vim.fn.stdpath('data') .. '\\lazy\\lazy.nvim'
     else
@@ -24,9 +23,9 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
-require('lazy').setup({
+return require('lazy').setup({
+    install = { colorscheme = { 'oxocarbon' } },
     spec = {
         { import = 'plugins' },
     },
-    install = { colorscheme = { 'oxocarbon' } },
 })

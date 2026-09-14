@@ -37,7 +37,7 @@ return {
             formatting = {
                 fields = { 'kind', 'abbr', 'menu' },
                 format = function(entry, vim_item)
-                    vim_item.kind = KindIcons[vim_item.kind] or KindIcons.Text
+                    vim_item.kind = KIND_ICONS[vim_item.kind] or KIND_ICONS.Text
                     vim_item.menu = ({
                         path = '[Path]',
                         buffer = '[Buffer]',

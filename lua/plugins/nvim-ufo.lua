@@ -1,9 +1,11 @@
+local options = vim.opt
+
 return {
     'kevinhwang91/nvim-ufo',
     lazy = false,
     dependencies = { 'kevinhwang91/promise-async' },
     opts = {
-        provider_selector = function()
+        provider_selector = function(_bufnr, _filetype, _buftype)
             return { 'treesitter', 'indent' }
         end,
     },
