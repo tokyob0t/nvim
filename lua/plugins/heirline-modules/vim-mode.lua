@@ -92,36 +92,7 @@ local mode_groups = {
 return function(...)
     return {
         init = function(self)
-            self.mode = vim.fn.mode(1) -- :h mode()
-
-            local oxocarbon = require('oxocarbon').oxocarbon
-
-            if not oxocarbon then
-                return
-            end
-
-            self.mode_colors = {
-                normal = {
-                    fg = oxocarbon.base02,
-                    bg = oxocarbon.base09,
-                },
-                insert = {
-                    fg = oxocarbon.base02,
-                    bg = oxocarbon.base12,
-                },
-                visual = {
-                    fg = oxocarbon.base02,
-                    bg = oxocarbon.base14,
-                },
-                replace = {
-                    fg = oxocarbon.base02,
-                    bg = oxocarbon.base10,
-                },
-                command = {
-                    fg = oxocarbon.base02,
-                    bg = oxocarbon.base13,
-                },
-            }
+            self.mode = vim.fn.mode(1)
         end,
 
         static = {
@@ -136,7 +107,7 @@ return function(...)
         hl = function(self)
             local group = self.mode_groups[self.mode] or 'normal'
 
-            return vim.tbl_extend('force', self.mode_colors[group], { bold = true })
+            return 'Status' .. group:sub(1, 1):upper() .. group:sub(2)
         end,
 
         update = {

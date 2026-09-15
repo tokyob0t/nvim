@@ -1,7 +1,7 @@
 local diagnostic = vim.diagnostic
 local Severity = diagnostic.severity
 
-diagnostic.config({
+diagnostic.config {
     virtual_text = { prefix = '#' },
     virtual_lines = false,
     update_in_insert = false,
@@ -26,4 +26,4 @@ diagnostic.config({
             [Severity.ERROR] = '',
         },
     },
-})
+}
