@@ -8,14 +8,11 @@
         ]
     },
     "workspace": {
-        "workspaceRoots": [
-            "lua/?.lua",
-            "lua/?/init.lua"
+        "library": [
+            "$VIMRUNTIME"
         ]
     },
-    "diagnostics": {
-        "disable": [
-            "undefined-global"
-        ]
-    }
+    "diagnostics.globals": [
+        "vim"
+    ]
 }
