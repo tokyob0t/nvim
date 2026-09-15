@@ -59,5 +59,14 @@ return {
             CurrentFileType {},
             CursorPosition {},
         },
+
+        opts = {
+            disable_winbar_cb = function(args)
+                return require('heirline.conditions').buffer_matches({
+                    buftype = { 'nofile', 'prompt', 'help', 'quickfix' },
+                    filetype = { '^git.*', 'fugitive', 'Trouble', 'dashboard' },
+                }, args.buf)
+            end,
+        },
     },
 }
