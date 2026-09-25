@@ -45,7 +45,6 @@ return {
         appearance = {
             nerd_font_variant = 'mono',
             kind_icons = Icons.kinds,
-            -- highlight_ns = vim.api.nvim_create_namespace('blink_cmp'),
         },
 
         sources = {
@@ -61,7 +60,7 @@ return {
             menu = {
                 draw = {
                     padding = { 0, 1 },
-                    columns = { { 'kind_icon' }, { 'label' }, { 'source_name' } },
+                    columns = { { 'kind_icon' }, { gap = 1, width = 30, 'label', 'source_name' } },
                     components = {
                         kind_icon = {
                             text = getKindIconText,
@@ -69,12 +68,14 @@ return {
                         },
 
                         label = {
+                            width = { fill = true, max = 30 },
                             text = function(ctx)
                                 return ctx.label
                             end,
                         },
 
                         source_name = {
+                            width = { max = 20 },
                             text = function(ctx)
                                 return '[' .. ctx.source_name .. ']'
                             end,
@@ -84,16 +85,17 @@ return {
             },
         },
 
-        -- cmdline = {
-        --     enabled = true,
-        --     keymap = { preset = 'inherit' },
-        --     sources = { 'cmdline' },
-        --     ghost_text = { enabled = true, show_without_selection = true },
-        --     list = { selection = { preselect = false } },
-        --     completion = {
-        --         menu = { auto_show = true },
-        --     },
-        -- },
+        cmdline = {
+            enabled = true,
+            keymap = { preset = 'inherit' },
+            sources = { default = { 'cmdline', 'buffer' } },
+            completion = {
+                list = { selection = { preselect = false } },
+                menu = { auto_show = true },
+                ghost_text = { enabled = true, show_without_selection = true },
+                documentation = { auto_show = true },
+            },
+        },
 
         term = {
             enabled = false,
