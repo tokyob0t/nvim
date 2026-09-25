@@ -1,3 +1,7 @@
+local options = vim.opt
+
+local Icons = require('icons')
+
 local Navic = require('plugins.heirline-modules.navic')
 
 local VimMode = require('plugins.heirline-modules.vim-mode')
@@ -7,6 +11,8 @@ local CursorPosition = require('plugins.heirline-modules.cursor-position')
 local LSPStatus = require('plugins.heirline-modules.lsp-status')
 local GitBranch = require('plugins.heirline-modules.git-branch')
 local CurrentFileType = require('plugins.heirline-modules.current-file-type')
+
+local Buffers = require('plugins.heirline-modules.buffers')
 
 local DEFAULT_EXCLUDED_FILETYPES = {
     'NvimTree.*',
@@ -36,12 +42,35 @@ end
 
 return {
     'rebelot/heirline.nvim',
-    dependencies = {
-        'SmiteshP/nvim-navic',
-    },
+    dependencies = { 'SmiteshP/nvim-navic' },
     event = 'UiEnter',
+    init = function()
+        options.showtabline = 0
+
+        vim.api.nvim_create_autocmd(
+            { 'BufEnter', 'TabEnter', 'BufAdd', 'BufDelete', 'BufModifiedSet', 'BufWritePost' },
+            {
+                callback = vim.schedule_wrap(function()
+                    local count = #vim.tbl_filter(function(bufnr)
+                        return vim.api.nvim_get_option_value('buflisted', { buf = bufnr })
+                    end, vim.api.nvim_list_bufs())
+
+                    -- local count = #vim.fn.getbufinfo { buflisted = 1 }
+                    options.showtabline = (count >= 2) and 2 or 0
+                    vim.cmd.redrawtabline()
+                end),
+            }
+        )
+    end,
+
     opts = {
+        tabline = WinBar {
+            excluded_filetypes = {},
+            Buffers {},
+        },
+
         winbar = WinBar {
+            { provider = '     ' },
             Navic {},
         },
 
@@ -54,8 +83,13 @@ return {
             GitBranch {
                 format = '(λ • #%s)',
             },
-            { provider = '%=' },
-            Diagnostics {},
+            { provider = '%=' }, -- separator
+            Diagnostics {
+                error_icon = Icons.diagnostics.error,
+                warn_icon = Icons.diagnostics.warn,
+                info_icon = Icons.diagnostics.info,
+                hint_icon = Icons.diagnostics.hint,
+            },
             CurrentFileType {},
             CursorPosition {},
         },

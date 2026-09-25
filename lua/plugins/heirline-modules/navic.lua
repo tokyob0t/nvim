@@ -1,17 +1,16 @@
 local CurrentFile = require('plugins.heirline-modules.current-file')
+local Icons = require('icons')
 
 --- TODO: improve
-return function()
+return function(...)
     return {
-        {
-            provider = '     ',
-        },
+        -- hl = 'Normal',
         CurrentFile {
             format = ':t:r',
             file_icon = true,
         },
         {
-            provider = ' ',
+            provider = Icons.common.chevron_right .. ' ',
             update = 'CursorMoved',
             hl = 'NavicSeparator',
             condition = function()

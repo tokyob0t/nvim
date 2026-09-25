@@ -1,6 +1,6 @@
-return function(...)
+---@param args { error_icon?: string, warn_icon?: string, info_icon?: string, hint_icon?: string }
+return function(args)
     local Severity = vim.diagnostic.severity
-    local cfg = vim.diagnostic.config()
 
     return {
         update = { 'DiagnosticChanged', 'BufEnter' },
@@ -17,10 +17,10 @@ return function(...)
         end,
 
         static = {
-            error_icon = cfg.signs.text[Severity.ERROR],
-            warn_icon = cfg.signs.text[Severity.WARN],
-            info_icon = cfg.signs.text[Severity.INFO],
-            hint_icon = cfg.signs.text[Severity.HINT],
+            error_icon = args.error_icon,
+            warn_icon = args.warn_icon,
+            info_icon = args.info_icon,
+            hint_icon = args.hint_icon,
         },
 
         {

@@ -1,22 +1,22 @@
+local variables = vim.v
+
 return function(...)
     return {
         init = function(self)
             local search = vim.fn.getreg('/')
 
-            if search ~= '' and vim.v.hlsearch == 1 then
-                local ok, count = pcall(vim.fn.searchcount, { maxcount = 999, timeout = 250 })
-
-                if not ok then
-                    self.search_count = nil
-                    return
-                end
-
-                if count and count.total > 0 then
-                    self.search_count = string.format('[%d/%d]', count.current, count.total)
-                    return
-                end
+            if not (search ~= '' and variables.hlsearch == 1) then
+                self.search_count = nil
+                return
             end
-            self.search_count = nil
+
+            local ok, count = pcall(vim.fn.searchcount, { maxcount = 999, timeout = 250 })
+
+            if ok and (count and count.total > 0) then
+                self.search_count = '[' .. count.current .. '/' .. count.total .. ']'
+            else
+                self.search_count = nil
+            end
         end,
 
         provider = function(self)

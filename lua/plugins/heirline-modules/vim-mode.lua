@@ -1,3 +1,5 @@
+local Icons = require('icons')
+
 local mode_names = {
     n = 'RW',
     no = 'RO',
@@ -41,7 +43,7 @@ local mode_names = {
     ['r?'] = 'r',
 
     ['!'] = '!',
-    t = '',
+    t = Icons.common.terminal,
 }
 
 local mode_groups = {

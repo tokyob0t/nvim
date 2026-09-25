@@ -34,6 +34,7 @@ return function(args)
             self.filename = vim.api.nvim_buf_get_name(0)
             self.extension = vim.fn.fnamemodify(self.filename, ':e')
         end,
+
         args.file_icon and {
             init = function(self)
                 self.icon, self.icon_color =
