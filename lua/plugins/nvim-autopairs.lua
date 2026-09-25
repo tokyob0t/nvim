@@ -6,11 +6,6 @@ return {
         disable_filetype = {
             'TelescopePrompt',
             'vim',
-            'fennel',
-            'clojure',
-            'lisp',
-            'racket',
-            'scheme',
         },
     },
 }

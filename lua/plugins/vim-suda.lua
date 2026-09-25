@@ -1,8 +1,9 @@
+local globals = vim.g
+
 return {
     'lambdalisue/vim-suda',
-    lazy = false,
-    config = function() end,
+    event = 'VeryLazy',
     init = function()
-        vim.g.suda_smart_edit = 1
+        globals.suda_smart_edit = 1
     end,
 }

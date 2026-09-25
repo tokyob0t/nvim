@@ -1,11 +1,16 @@
 return {
-	"NvChad/nvim-colorizer.lua",
-	opts = {
-		filetypes = { "*" },
-		user_default_options = {
-			mode = "background",
-			virtualtext = "■",
-			always_update = false,
-		},
-	},
+    'catgoose/nvim-colorizer.lua',
+    event = 'BufReadPre',
+    opts = {
+        user_commands = false,
+        lazy_load = true,
+        options = {
+            display = {
+                mode = 'background',
+                virtualtext = {
+                    hl_mode = 'background',
+                },
+            },
+        },
+    },
 }

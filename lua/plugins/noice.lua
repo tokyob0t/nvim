@@ -1,3 +1,5 @@
+local Icons = require('icons')
+
 return {
     'folke/noice.nvim',
     event = 'VeryLazy',
@@ -9,24 +11,24 @@ return {
         format = {},
         cmdline = {
             format = {
-                cmdline = { pattern = '^:', icon = ' ', lang = 'vim' },
+                cmdline = { pattern = '^:', icon = Icons.common.terminal .. ' ', lang = 'vim' },
                 search_down = {
                     kind = 'search',
                     pattern = '^/',
-                    icon = ' ',
+                    icon = Icons.common.search .. ' ',
                     lang = 'regex',
                 },
                 search_up = {
                     kind = 'search',
                     pattern = '^%?',
-                    icon = ' ',
+                    icon = Icons.common.search .. ' ',
                     lang = 'regex',
                 },
-                replace = { pattern = '^:%%s%/', icon = '', lang = 'regex' },
+                replace = { pattern = '^:%%s%/', icon = Icons.common.regex, lang = 'regex' },
                 filter = { pattern = '^:%s*!', icon = '$', lang = 'bash' },
-                lua = { pattern = '^:%s*lua%s+', icon = '', lang = 'lua' },
-                help = { pattern = '^:%s*help%s+', icon = '󰋖' },
-                input = { icon = '󰬴 ' },
+                lua = { pattern = '^:%s*lua%s+', icon = Icons.common.lua, lang = 'lua' },
+                help = { pattern = '^:%s*help%s+', icon = Icons.common.help },
+                input = { icon = Icons.common.input .. ' ' },
             },
             opts = {
                 win_options = {

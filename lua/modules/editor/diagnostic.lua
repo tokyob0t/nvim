@@ -1,5 +1,6 @@
 local diagnostic = vim.diagnostic
 local Severity = diagnostic.severity
+local Icons = require('icons')
 
 diagnostic.config {
     virtual_text = { prefix = '#' },
@@ -20,10 +21,10 @@ diagnostic.config {
             min = Severity.INFO,
         },
         text = {
-            [Severity.HINT] = '󰌶',
-            [Severity.INFO] = '',
-            [Severity.WARN] = '',
-            [Severity.ERROR] = '',
+            [Severity.HINT] = Icons.diagnostics.hint,
+            [Severity.INFO] = Icons.diagnostics.info,
+            [Severity.WARN] = Icons.diagnostics.warn,
+            [Severity.ERROR] = Icons.diagnostics.error,
         },
     },
 }

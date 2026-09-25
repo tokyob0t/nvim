@@ -1,15 +1,38 @@
+local Icons = require('icons')
+
 return {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
     opts = {
-        debounce = 100,
-        indent = { char = '│' },
-        whitespace = { highlight = { 'Whitespace', 'NonText' } },
+        indent = {
+            char = Icons.indent,
+            -- highlight = {
+            --     '@constant.builtin',
+            --     '@punctuation.bracket',
+            --     'Keyword',
+            --     'DiagnosticError',
+            --     'Todo',
+            --     'String',
+            --     'Number',
+            -- },
+        },
         scope = {
+            highlight = {
+                '@constant.builtin',
+                '@punctuation.bracket',
+                'Keyword',
+                'DiagnosticError',
+                'Todo',
+                'String',
+                'Number',
+            },
             exclude = {
                 language = {
                     'fennel',
-                    'fnl',
+                    'clojure',
+                    'lisp',
+                    'racket',
+                    'scheme',
                 },
             },
         },

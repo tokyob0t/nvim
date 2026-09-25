@@ -3,6 +3,7 @@ local options = vim.opt
 
 --  speedup
 globals.loaded_netrw = 1
+globals.loaded_netrwPlugin = 1
 options.updatetime = 250
 options.timeoutlen = 400
 
@@ -11,11 +12,12 @@ options.swapfile = false
 options.conceallevel = 2
 options.infercase = true
 options.shortmess:append('sWcI')
-options.signcolumn = 'yes:1'
+options.signcolumn = 'yes:2'
 options.formatoptions = { 'q', 'j' }
 options.termguicolors = true
 options.wrap = false
 options.cursorline = true
+options.statuscolumn = '%C %s%l '
 
 -- just good defaults
 options.splitright = true
@@ -59,9 +61,6 @@ options.fillchars = {
     vert = ' ',
     horiz = ' ',
     diff = '╱',
-    foldclose = '',
-    foldopen = '',
-    fold = ' ',
     msgsep = '─',
 }
 

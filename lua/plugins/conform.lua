@@ -1,11 +1,13 @@
+local globals = vim.g
+
 return {
     'stevearc/conform.nvim',
     event = 'BufWritePre',
     cmd = 'ConformInfo',
     init = function()
         vim.api.nvim_create_user_command('ToggleFormat', function()
-            local global_state = vim.g.disable_autoformat
-            local buffer_state = vim.b.disable_autoformat
+            local global_state = globals.disable_autoformat
+            local buffer_state = globals.disable_autoformat
 
             vim.b.disable_autoformat = not (global_state or buffer_state)
         end, {
@@ -24,7 +26,7 @@ return {
             typescript = { 'biome' },
             xml = { 'xmlformatter' },
             kdl = { 'kdlfmt' },
-            -- tsx = { 'biome' },
+            tsx = { 'biome' },
             json = { 'biome' },
             sass = { 'prettierd' },
             scss = { 'prettierd' },

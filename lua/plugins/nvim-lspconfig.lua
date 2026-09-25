@@ -31,14 +31,14 @@ local servers = {
     sqls = {}, -- SQL
     postgres_lsp = {},
     r_language_server = {},
-    gopls = {
+    gopls = { -- Go
         settings = {
             gopls = {
                 semanticTokens = true,
                 usePlaceholders = true,
             },
         },
-    }, -- Go
+    },
 }
 
 local default_capabilities = {
@@ -58,7 +58,7 @@ local default_capabilities = {
 return {
     'neovim/nvim-lspconfig',
     dependencies = {
-        'SmiteshP/nvim-navic',
+        -- 'SmiteshP/nvim-navic',
         'saghen/blink.cmp',
     },
     config = function()

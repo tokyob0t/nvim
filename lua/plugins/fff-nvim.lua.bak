@@ -1,0 +1,158 @@
+return {
+    'dmtrKovalenko/fff',
+    lazy = false,
+    build = function()
+        require('fff.download').download_or_build_binary()
+    end,
+
+    keys = {
+        -- { '<leader>.', '<cmd>Telescope find_files<CR>' },
+        -- { '<leader><Tab>.', '<cmd>Telescope oldfiles<CR>' },
+        -- { '<leader>,', '<cmd>Telescope live_grep<CR>' },
+        -- { '<leader><Tab>,', '<cmd>Telescope marks<CR>' },
+        -- { '<leader>k', '<cmd>Telescope keymaps<CR>' },
+        { '<leader>f', "<cmd>lua require('fff').find_files({ title = 'Find Files' })<cr>" },
+        { '<leader>,', "<cmd>lua require('fff').live_grep({ title = 'Live Grep' })<cr>" },
+    },
+    init = function()
+        local oxocarbon = require('oxocarbon').oxocarbon
+
+        if not oxocarbon then
+            return
+        end
+
+        local set = function(name, color)
+            vim.api.nvim_set_hl(0, name, { default = true, fg = color })
+        end
+
+        -- vim.api.nvim_set_hl(0, 'IncSearch', {
+        --     fg = '#3ddbd9',
+        -- })
+
+        -- vim.api.nvim_set_hl(0, 'FFFPromptRed', {
+        --     bg = '#ff5f5f', -- Color de fondo (puedes ajustar el hex)
+        --     fg = '#ffffff', -- Color de texto (blanco para buen contraste)
+        --     bold = true,
+        -- })
+        -- -- Hereda el color de texto de 'Normal' pero fuerza el fondo a transparente
+        -- vim.api.nvim_set_hl(0, 'FFFNormalTransparent', {
+        --     fg = vim.api.nvim_get_hl(0, { name = 'Normal' }).fg,
+        --     bg = 'NONE',
+        -- })
+    end,
+    opts = {
+        prompt = '   ',
+        title = 'Find Files',
+        git = { status_text_color = false },
+        file_picker = {
+            fuzzy_query_highlighting = true,
+        },
+        layout = {
+            width = 0.87,
+            height = 0.8,
+            preview_size = 0.55,
+            prompt_position = 'top', -- or 'top'
+            show_path_first = true,
+            show_scrollbar = false,
+            border = 'solid',
+        },
+        preview = {
+            line_numbers = false,
+            cursorlineopt = 'both',
+            wrap_lines = false,
+        },
+
+        hl = {
+            border = 'TelescopeBorder',
+            normal = 'TelescopeNormal',
+            matched = 'TelescopeMatching',
+            winhl = {
+                preview = 'Title:TelescopePreviewTitle',
+                --     --     preview = 'Normal:TelescopePreviewNormal,FloatBorder:TelescopePreviewBorder,',
+            },
+            --     title = 'TelescopePromptTitle',
+            --     prompt = 'TelescopePromptPrefix',
+            --     cursor = 'TelescopeSelection',
+            --     frecency = 'Number',
+            --     debug = 'Comment',
+            --     combo_header = 'Number',
+            --     scrollbar = 'TelescopeScrollbar',
+            --     directory_path = 'FFFNormalTransparent',
+
+            --     -- Multi-select
+            --     selected = 'TelescopeSelection',
+            --     selected_active = 'TelescopeSelection',
+
+            --     -- Git text highlights (reutilizando Telescope o sintaxis estándar)
+            --     git_staged = 'DiffAdded', -- Usa oxocarbon.base07 (verde/cyan de staged)
+            --     git_modified = 'DiffChanged', -- Usa oxocarbon.base09 (naranja/amarillo de cambio)
+            --     git_deleted = 'DiffRemoved', -- Usa oxocarbon.base10 (rojo/rosado de borrado)
+            --     git_renamed = 'DiffChanged', -- Mismo color de modificación
+            --     git_untracked = 'NonText', -- O puedes usar 'DiffAdded' si prefieres que destaque igual que staged
+            --     git_ignored = 'Comment',
+
+            --     -- Git signs
+            --     git_sign_staged = 'GitSignsAdd',
+            --     git_sign_modified = 'GitSignsChange',
+            --     git_sign_deleted = 'GitSignsDelete',
+            --     git_sign_renamed = 'GitSignsChange',
+            --     git_sign_untracked = 'NonText',
+            --     git_sign_ignored = 'Comment',
+
+            --     -- Git signs selected
+            --     git_sign_staged_selected = 'TelescopeSelection',
+            --     git_sign_modified_selected = 'TelescopeSelection',
+            --     git_sign_deleted_selected = 'TelescopeSelection',
+            --     git_sign_renamed_selected = 'TelescopeSelection',
+            --     git_sign_untracked_selected = 'TelescopeSelection',
+            --     git_sign_ignored_selected = 'TelescopeSelection',
+
+            --     -- Grep highlights
+            --     grep_match = 'TelescopeMatching',
+            --     grep_line_number = 'LineNr',
+            --     grep_regex_active = 'DiagnosticInfo',
+            --     grep_plain_active = 'Comment',
+            --     grep_fuzzy_active = 'DiagnosticHint',
+
+            --     -- Suggestions
+            --     suggestion_header = 'WarningMsg',
+
+            --     -- File info panel
+            --     file_info_section = 'TelescopePreviewTitle',
+            --     file_info_separator = 'TelescopeBorder',
+            --     file_info_label = 'TelescopeResultsTitle',
+            --     file_info_value = 'TelescopeNormal',
+            --     file_info_value_dim = 'Comment',
+            --     file_info_size = 'Number',
+            --     file_info_type = 'Type',
+            --     file_info_path = 'Directory',
+            --     file_info_total_score = 'Bold',
+            --     file_info_match_type = 'TelescopeMatching',
+            --     file_info_score_pos = 'DiagnosticOk',
+            --     file_info_score_neg = 'DiagnosticError',
+
+            --     -- Per-window overrides ajustados según Telescope
+            --     -- winhl = {
+            --     --     prompt = 'Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder,FloatTitle:TelescopePromptTitle',
+            --     --     list = 'Normal:TelescopeNormal,FloatBorder:TelescopeResultsBorder,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection',
+            --     --     preview = 'Normal:TelescopePreviewNormal,FloatBorder:TelescopePreviewBorder,FloatTitle:TelescopePreviewTitle',
+            --     --     file_info = 'Normal:TelescopeNormal,FloatBorder:TelescopeBorder,FloatTitle:TelescopeTitle',
+            --     -- },
+            --     winhl = {
+            --         prompt = 'Normal:FFFPromptRed,FloatBorder:TelescopePromptBorder,FloatTitle:TelescopePromptTitle',
+            --         list = 'Normal:TelescopeNormal,FloatBorder:TelescopeResultsBorder,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection',
+            --         preview = 'Normal:TelescopePreviewNormal,FloatBorder:TelescopePreviewBorder,FloatTitle:TelescopePreviewTitle',
+            --         file_info = 'Normal:TelescopeNormal,FloatBorder:TelescopeBorder,FloatTitle:TelescopeTitle',
+            --     },
+            --     winhl = {
+            --         -- prompt = 'Normal:Pmenu,FloatBorder:FloatBorder',
+            --         -- list = 'Normal:NormalFloat,FloatBorder:FloatBorder',
+            --         -- La vista previa usa el fondo flotante estándar
+            --         -- preview = 'Normal:NormalFloat,FloatBorder:FloatBorder',
+            --         -- prompt = 'Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder,FloatTitle:TelescopePromptTitle',
+            --         -- preview = 'Normal:TelescopePreviewNormal,FloatBorder:TelescopeBorder,FloatTitle:TelescopePreviewTitle',
+            --         -- list = 'Normal:TelescopeNormal,FloatBorder:TelescopeBorder,FloatTitle:TelescopeResultsTitle,CursorLine:FFFSelection',
+            --     },
+        },
+    },
+}

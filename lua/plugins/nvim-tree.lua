@@ -1,5 +1,6 @@
 local globals = vim.g
 local options = vim.opt
+local Icons = require('icons')
 
 return {
     'nvim-tree/nvim-tree.lua',
@@ -10,11 +11,6 @@ return {
     keys = {
         { '<leader>e', '<cmd>NvimTreeToggle<cr>' },
     },
-    init = function()
-        globals.loaded_netrw = 1
-        globals.loaded_netrwPlugin = 1
-        options.termguicolors = true
-    end,
     opts = {
         view = {
             width = 25,
@@ -34,33 +30,8 @@ return {
             group_empty = true,
             icons = {
                 git_placement = 'after',
-                symlink_arrow = ' -> ',
-                glyphs = {
-                    default = '',
-                    symlink = '',
-                    bookmark = '󰆤',
-                    modified = '●',
-                    hidden = '󰜌',
-                    folder = {
-                        arrow_closed = '',
-                        arrow_open = '',
-                        default = '',
-                        open = '',
-                        empty = '',
-                        empty_open = '',
-                        symlink = '',
-                        symlink_open = '',
-                    },
-                    git = {
-                        unstaged = '',
-                        staged = '',
-                        unmerged = '',
-                        untracked = '',
-                        renamed = '',
-                        deleted = '',
-                        ignored = '',
-                    },
-                },
+                symlink_arrow = ' ' .. Icons.common.arrow .. ' ',
+                glyphs = Icons.tree,
             },
         },
     },

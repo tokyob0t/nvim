@@ -1,3 +1,5 @@
+local Icons = require('icons')
+
 return {
     'rahuliyer95/mason.nvim',
     branch = 'feat/1888/pnpm-installer',
@@ -9,13 +11,9 @@ return {
         },
         ui = {
             border = 'solid',
-            PATH = 'SKIP',
+            path = 'skip',
             check_outdated_packages_on_open = true,
-            icons = {
-                package_installed = '●',
-                package_pending = '○',
-                package_uninstalled = '○',
-            },
+            icons = Icons.package,
         },
     },
 }

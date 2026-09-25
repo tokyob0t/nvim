@@ -1,14 +1,14 @@
+local Icons = require('icons')
 local options = vim.opt
 
 local function getKindIconText(ctx)
     local devicons = require('nvim-web-devicons')
 
     if vim.tbl_contains({ 'Path' }, ctx.source_name) then
-        return string.format(' %s%s ', devicons.get_icon(ctx.label), ctx.icon_gap)
+        return ' ' .. devicons.get_icon(ctx.label) .. ctx.icon_gap .. ' '
     end
 
     return ctx.kind_icon .. ctx.icon_gap
-    -- return KIND_ICONS[ctx.kind] .. ctx.icon_gap
 end
 
 local function getKindIconHighlight(ctx)
@@ -27,15 +27,11 @@ end
 
 return {
     'saghen/blink.cmp',
-    version = '1.*',
     -- build = 'cargo build --release',
     dependencies = {
+        'saghen/blink.lib',
         'rafamadriz/friendly-snippets',
         'nvim-tree/nvim-web-devicons',
-
-        -- 'L3MON4D3/LuaSnip',
-        -- 'saadparwaiz1/cmp_luasnip',
-        -- 'hrsh7th/cmp-nvim-lsp-signature-help'
     },
     init = function()
         options.completeopt = { 'menu', 'menuone', 'noselect' }
@@ -48,7 +44,7 @@ return {
         },
         appearance = {
             nerd_font_variant = 'mono',
-            kind_icons = KIND_ICONS,
+            kind_icons = Icons.kinds,
             -- highlight_ns = vim.api.nvim_create_namespace('blink_cmp'),
         },
 

@@ -26,8 +26,10 @@ return {
     branch = 'main',
     lazy = false,
     build = ':TSUpdate',
+    init = function() end,
     config = function()
         local ts = require('nvim-treesitter')
+
         ts.install(parsers):wait(300000)
 
         vim.api.nvim_create_autocmd('FileType', {
