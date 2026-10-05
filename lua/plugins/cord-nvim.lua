@@ -1,20 +1,8 @@
-return {
-    'vyfor/cord.nvim',
-    ---@type CordConfig
-    opts = {
-        text = {
-            editing = function(opts)
-                local file, line, col = opts.filename, opts.cursor_line, opts.cursor_char
-
-                return string.format('Editing %s - %s:%s', file, line, col)
-            end,
-        },
-        advanced = {
-            discord = {
-                reconnect = {
-                    enabled = true,
-                },
-            },
-        },
-    },
-}
+-- [nfnl] fnl/plugins/cord-nvim.fnl
+local function _2_(_1_)
+  local filename = _1_.filename
+  local cursor_line = _1_.cursor_line
+  local cursor_char = _1_.cursor_char
+  return ("Editing" .. filename .. "-" .. cursor_line .. ":" .. cursor_char)
+end
+return {"vyfor/cord.nvim", opts = {advanced = {discord = {reconnect = {enabled = true}}}, text = {editing = _2_}}}

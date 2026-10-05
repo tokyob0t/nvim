@@ -1,0 +1,50 @@
+(local globals vim.g)
+(local options vim.opt)
+(set globals.loaded_netrw 1)
+(set globals.loaded_netrwPlugin 1)
+(set options.updatetime 250)
+(set options.timeoutlen 400)
+(set options.swapfile false)
+(set options.conceallevel 2)
+(set options.infercase true)
+(options.shortmess:append :sWcI)
+(set options.signcolumn "yes:2")
+(set options.formatoptions [:q :j])
+(set options.termguicolors true)
+(set options.wrap false)
+(set options.cursorline true)
+(set options.statuscolumn "%C %s%l ")
+(set options.splitright true)
+(set options.splitbelow true)
+(set options.expandtab true)
+(set options.tabstop 4)
+(set options.shiftwidth 4)
+(set options.softtabstop 4)
+(set options.clipboard :unnamedplus)
+(set options.mouse :a)
+(set options.undofile true)
+(set options.writebackup false)
+(set options.swapfile false)
+(set options.ignorecase true)
+(set options.smartcase true)
+(set options.gdefault true)
+(set options.grepprg "rg --vimgrep")
+(set options.grepformat "%f:%l:%c:%m")
+(set options.path ["." "**"])
+(set options.number true)
+(set options.list true)
+(set options.hidden true)
+(set options.linebreak true)
+(set options.breakindent true)
+(set options.scrolloff 4)
+(set options.fillchars {:diff "╱"
+                        :eob " "
+                        :horiz " "
+                        :msgsep "─"
+                        :vert " "})
+
+(set options.listchars {:extends "»"
+                        :nbsp "␣"
+                        :precedes "«"
+                        :tab " ──"
+                        :trail "·"})

@@ -1,95 +1,31 @@
-local Icons = require('icons')
-
-local function button(sc, txt, keybind)
-    local sc_ = sc:gsub('%s', ''):gsub('SPC', '<leader>')
-
-    return {
-        type = 'button',
-        val = txt,
-        on_press = function()
-            local key = vim.api.nvim_replace_termcodes(sc_, true, false, true)
-
-            vim.api.nvim_feedkeys(key, 'normal', false)
-        end,
-        opts = {
-            position = 'center',
-            text = txt,
-            shortcut = sc,
-            cursor = 5,
-            width = 36,
-            align_shortcut = 'right',
-            hl = 'AlphaButtons',
-            keymap = keybind and { 'n', sc_, keybind, { noremap = true, silent = true } },
-        },
-    }
+-- [nfnl] fnl/plugins/alpha-nvim.fnl
+local Icons = require("icons")
+local function button(sc, text, keybind)
+  local sc_ = sc:gsub("%s", ""):gsub("SPC", "<leader>")
+  local function _1_()
+    local key = vim.api.nvim_replace_termcodes(sc_, true, false, true)
+    return vim.api.nvim_feedkeys(key, "normal", false)
+  end
+  local _2_
+  if keybind then
+    _2_ = {"n", sc_, keybind, {noremap = true, silent = true}}
+  else
+    _2_ = nil
+  end
+  return {type = "button", val = text, on_press = _1_, opts = {text = text, align_shortcut = "right", cursor = 5, hl = "AlphaButtons", keymap = _2_, position = "center", shortcut = sc, width = 36}}
 end
-
-local default = {}
-
-default.ascii = {
-    '   ⣴⣶⣤⡤⠦⣤⣀⣤⠆     ⣈⣭⣿⣶⣿⣦⣼⣆          ',
-    '    ⠉⠻⢿⣿⠿⣿⣿⣶⣦⠤⠄⡠⢾⣿⣿⡿⠋⠉⠉⠻⣿⣿⡛⣦       ',
-    '          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷    ⠻⠿⢿⣿⣧⣄     ',
-    '           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    ',
-    '          ⢠⣿⣿⣿⠈    ⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   ',
-    '   ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘  ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  ',
-    '  ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   ',
-    ' ⣠⣿⠿⠛ ⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  ',
-    ' ⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇ ⠛⠻⢷⣄ ',
-    '      ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     ',
-    '       ⠻⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⢀⣀⣤⣾⡿⠃     ',
-}
-
-default.header = {
-    type = 'text',
-    val = default.ascii,
-    opts = {
-        position = 'center',
-        hl = 'Comment',
-    },
-}
-
-default.buttons = {
-    type = 'group',
-    opts = {
-        spacing = 1,
-    },
-    val = {
-        button('    SPC .', Icons.common.search .. '  Find File  ', ':Telescope find_files<CR>'),
-        button('    SPC ,', Icons.common.word .. '  Find Word  ', ':Telescope live_grep<CR>'),
-        button('SPC TAB .', Icons.common.recent .. '  Recent File  ', ':Telescope oldfiles<CR>'),
-        button('SPC TAB ,', Icons.common.bookmark .. '  Bookmarks  ', ':Telescope marks<CR>'),
-        button('    SPC k', Icons.common.keymap .. '  Keymaps', ':Telescope keymaps<CR>'),
-    },
-}
-
-local function getPadding(content_height)
-    return math.max(2, math.floor((vim.fn.winheight(0) - content_height) / 2))
+local default
+do
+  local ascii = {"   \226\163\180\226\163\182\226\163\164\226\161\164\226\160\166\226\163\164\226\163\128\226\163\164\226\160\134     \226\163\136\226\163\173\226\163\191\226\163\182\226\163\191\226\163\166\226\163\188\226\163\134          ", "    \226\160\137\226\160\187\226\162\191\226\163\191\226\160\191\226\163\191\226\163\191\226\163\182\226\163\166\226\160\164\226\160\132\226\161\160\226\162\190\226\163\191\226\163\191\226\161\191\226\160\139\226\160\137\226\160\137\226\160\187\226\163\191\226\163\191\226\161\155\226\163\166       ", "          \226\160\136\226\162\191\226\163\191\226\163\159\226\160\166 \226\163\190\226\163\191\226\163\191\226\163\183    \226\160\187\226\160\191\226\162\191\226\163\191\226\163\167\226\163\132     ", "           \226\163\184\226\163\191\226\163\191\226\162\167 \226\162\187\226\160\187\226\163\191\226\163\191\226\163\183\226\163\132\226\163\128\226\160\132\226\160\162\226\163\128\226\161\128\226\160\136\226\160\153\226\160\191\226\160\132    ", "          \226\162\160\226\163\191\226\163\191\226\163\191\226\160\136    \226\163\187\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\163\155\226\163\179\226\163\164\226\163\128\226\163\128   ", "   \226\162\160\226\163\167\226\163\182\226\163\165\226\161\164\226\162\132 \226\163\184\226\163\191\226\163\191\226\160\152  \226\162\128\226\163\180\226\163\191\226\163\191\226\161\191\226\160\155\226\163\191\226\163\191\226\163\167\226\160\136\226\162\191\226\160\191\226\160\159\226\160\155\226\160\187\226\160\191\226\160\132  ", "  \226\163\176\226\163\191\226\163\191\226\160\155\226\160\187\226\163\191\226\163\191\226\161\166\226\162\185\226\163\191\226\163\183   \226\162\138\226\163\191\226\163\191\226\161\143  \226\162\184\226\163\191\226\163\191\226\161\135 \226\162\128\226\163\160\226\163\132\226\163\190\226\160\132   ", " \226\163\160\226\163\191\226\160\191\226\160\155 \226\162\128\226\163\191\226\163\191\226\163\183\226\160\152\226\162\191\226\163\191\226\163\166\226\161\128 \226\162\184\226\162\191\226\163\191\226\163\191\226\163\132 \226\163\184\226\163\191\226\163\191\226\161\135\226\163\170\226\163\191\226\161\191\226\160\191\226\163\191\226\163\183\226\161\132  ", " \226\160\153\226\160\131   \226\163\188\226\163\191\226\161\159  \226\160\136\226\160\187\226\163\191\226\163\191\226\163\166\226\163\140\226\161\135\226\160\187\226\163\191\226\163\191\226\163\183\226\163\191\226\163\191\226\163\191 \226\163\191\226\163\191\226\161\135 \226\160\155\226\160\187\226\162\183\226\163\132 ", "      \226\162\187\226\163\191\226\163\191\226\163\132   \226\160\136\226\160\187\226\163\191\226\163\191\226\163\191\226\163\183\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\161\159 \226\160\171\226\162\191\226\163\191\226\161\134     ", "       \226\160\187\226\163\191\226\163\191\226\163\191\226\163\191\226\163\182\226\163\182\226\163\190\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\163\191\226\161\159\226\162\128\226\163\128\226\163\164\226\163\190\226\161\191\226\160\131     "}
+  default = {ascii = ascii, header = {opts = {hl = "Comment", position = "center"}, type = "text", val = ascii}, buttons = {opts = {spacing = 1}, type = "group", val = {button("    SPC .", (Icons.common.search .. "  Find File  "), ":Telescope find_files<CR>"), button("    SPC ,", (Icons.common.word .. "  Find Word  "), ":Telescope live_grep<CR>"), button("SPC TAB .", (Icons.common.recent .. "  Recent File  "), ":Telescope oldfiles<CR>"), button("SPC TAB ,", (Icons.common.bookmark .. "  Bookmarks  "), ":Telescope marks<CR>"), button("    SPC k", (Icons.common.keymap .. "  Keymaps"), ":Telescope keymaps<CR>")}}}
 end
-
+local function get_padding(content_height)
+  return math.max(2, math.floor(((vim.fn.winheight(0) - content_height) / 2)))
+end
 local header_height = #default.ascii
 local button_count = #default.buttons.val
-local button_spacing = default.buttons.opts.spacing or 0
-
-local buttons_height = button_count + (button_count - 1) * button_spacing
-
-local total_height = header_height + 2 + buttons_height
-
-local header_padding = getPadding(total_height)
-
-return {
-    'goolord/alpha-nvim',
-    dependencies = { 'nvim-telescope/telescope.nvim' },
-    event = 'VimEnter',
-    opts = {
-        opts = {
-            margin = 5,
-        },
-        layout = {
-            { type = 'padding', val = header_padding },
-            default.header,
-            { type = 'padding', val = 2 },
-            default.buttons,
-        },
-    },
-}
+local button_spacing = (default.buttons.opts.spacing or 0)
+local buttons_height = (button_count + ((button_count - 1) * button_spacing))
+local total_height = (header_height + 2 + buttons_height)
+local header_padding = get_padding(total_height)
+return {"goolord/alpha-nvim", dependencies = {"nvim-telescope/telescope.nvim"}, event = "VimEnter", opts = {layout = {{type = "padding", val = header_padding}, default.header, {type = "padding", val = 2}, default.buttons}, opts = {margin = 5}}}

@@ -1,3 +1,3 @@
-vim.g.mapleader = ' '
-
-require('modules')
+-- [nfnl] init.fnl
+vim.g.mapleader = " "
+return require("modules")

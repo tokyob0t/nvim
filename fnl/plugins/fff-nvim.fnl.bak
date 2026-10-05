@@ -1,0 +1,18 @@
+{[1] :dmtrKovalenko/fff.nvim
+ :build (fn []
+          (let [build (require :fff.build)]
+            (build:build)))
+ :event :VeryLazy
+ :opts {:layout {:preview {:width 0.6
+                           :horizontal false}}
+        :close_on_selection true
+        :prompt "  "
+        :keymaps {:close [:<Esc> :<C-c>]
+                  :select [:<CR>]
+                  :select_split [:<C-s>]
+                  :select_vsplit [:<C-v>]
+                  :select_tab [:<C-t>]
+                  :move_up [:<C-p> :<C-k> :<Up>]
+                  :move_down [:<C-n> :<C-j> :<Down>]
+                  :preview_scroll_up [:<S-up>]
+                  :preview_scroll_down [:<S-down>]}}}
