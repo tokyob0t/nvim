@@ -46,6 +46,7 @@ return {
     event = 'UiEnter',
     init = function()
         options.showtabline = 0
+        vim.api.nvim_set_hl(0, 'WinBar', { bg = 'NONE' })
 
         vim.api.nvim_create_autocmd(
             { 'BufEnter', 'TabEnter', 'BufAdd', 'BufDelete', 'BufModifiedSet', 'BufWritePost' },
@@ -66,7 +67,10 @@ return {
     opts = {
         tabline = WinBar {
             excluded_filetypes = {},
-            Buffers {},
+            Buffers {
+                modified_icon = Icons.tree.git.unstaged,
+                readonly_icon = Icons.tree.git.ignored,
+            },
         },
 
         winbar = WinBar {
@@ -77,8 +81,10 @@ return {
         statusline = WinBar {
             VimMode {},
             CurrentFile {
-                file_icon = false,
-                editable_icon = true,
+                format = ':t',
+                enable_file_icon = false,
+                modified_icon = Icons.tree.git.unstaged,
+                readonly_icon = Icons.tree.git.ignored,
             },
             GitBranch {
                 format = '(λ • #%s)',

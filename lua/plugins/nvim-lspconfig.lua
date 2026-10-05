@@ -6,6 +6,7 @@ local servers = {
     -- jedi_language_server = {},
     jsonls = {}, -- JSON
     ts_ls = {}, -- TypeScript/JavaScript
+    astro = {},
     biome = {},
     emmet_language_server = {
         init_options = { showSuggestionsAsSnippets = true },

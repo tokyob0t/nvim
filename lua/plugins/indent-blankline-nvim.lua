@@ -3,18 +3,10 @@ local Icons = require('icons')
 return {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
+    ---@type ibl.config
     opts = {
         indent = {
             char = Icons.indent,
-            -- highlight = {
-            --     '@constant.builtin',
-            --     '@punctuation.bracket',
-            --     'Keyword',
-            --     'DiagnosticError',
-            --     'Todo',
-            --     'String',
-            --     'Number',
-            -- },
         },
         scope = {
             highlight = {

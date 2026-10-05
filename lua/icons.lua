@@ -39,6 +39,7 @@ return {
         pending = '○',
         uninstalled = '○',
     },
+
     tree = {
         default = '',
         symlink = '',

@@ -5,10 +5,10 @@ local function getKindIconText(ctx)
     local devicons = require('nvim-web-devicons')
 
     if vim.tbl_contains({ 'Path' }, ctx.source_name) then
-        return ' ' .. devicons.get_icon(ctx.label) .. ctx.icon_gap .. ' '
+        return ' ' .. tostring(devicons.get_icon(ctx.label)) .. tostring(ctx.icon_gap) .. ' '
     end
 
-    return ctx.kind_icon .. ctx.icon_gap
+    return tostring(ctx.kind_icon) .. tostring(ctx.icon_gap)
 end
 
 local function getKindIconHighlight(ctx)
@@ -33,9 +33,13 @@ return {
         'rafamadriz/friendly-snippets',
         'nvim-tree/nvim-web-devicons',
     },
+
     init = function()
         options.completeopt = { 'menu', 'menuone', 'noselect' }
     end,
+
+    opts_extend = { 'sources.default' },
+
     opts = {
         keymap = {
             preset = 'enter',

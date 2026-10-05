@@ -2,10 +2,10 @@ local Icons = require('icons')
 
 local options = vim.opt
 
+options.foldenable = true
 options.foldcolumn = '1'
 options.foldlevel = 99
 options.foldlevelstart = 99
-options.foldenable = true
 
 options.fillchars:append {
     fold = Icons.fold,

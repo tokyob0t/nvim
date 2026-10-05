@@ -1,9 +1,13 @@
-local diagnostic = vim.diagnostic
-local Severity = diagnostic.severity
 local Icons = require('icons')
 
+local diagnostic = vim.diagnostic
+local Severity = diagnostic.severity
+
+---@diagnostic disable-next-line:param-type-mismatch
 diagnostic.config {
-    virtual_text = { prefix = '#' },
+    virtual_text = {
+        prefix = '#',
+    },
     virtual_lines = false,
     update_in_insert = false,
     severity_sort = true,

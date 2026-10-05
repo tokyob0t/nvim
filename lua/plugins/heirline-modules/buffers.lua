@@ -1,8 +1,5 @@
 local Icons = require('icons')
 
-local MODIFIED = ''
-local READONLY = ''
-
 local TablineOffset = {
     condition = function(self)
         local win = vim.api.nvim_tabpage_list_wins(0)[1]
@@ -12,13 +9,14 @@ local TablineOffset = {
         end
 
         local bufnr = vim.api.nvim_win_get_buf(win)
+
         if not vim.api.nvim_buf_is_valid(bufnr) then
             return false
-        end
-        if vim.bo[bufnr].filetype == 'NvimTree' then
+        elseif vim.bo[bufnr].filetype == 'NvimTree' then
             self.winid = win
             return true
         end
+
         return false
     end,
     provider = function(self)
@@ -35,27 +33,19 @@ local TablineOffset = {
     end,
 }
 
----@param args { editable_icon?: boolean }
+---@param args { modified_icon?: string, readonly_icon?: string }
 return function(args)
-    local ReadonlyFlag = args.editable_icon
+    local ReadonlyFlag = args.readonly_icon
         and {
-            condition = function(self)
-                return not vim.api.nvim_get_option_value('modifiable', { buf = self.bufnr })
-                    or vim.api.nvim_get_option_value('readonly', { buf = self.bufnr })
-            end,
-
-            provider = function(self)
-                if vim.api.nvim_get_option_value('buftype', { buf = self.bufnr }) == 'terminal' then
-                    return ' ' .. Icons.common.terminal
-                end
-
-                return ' ' .. READONLY
+            provider = args.readonly_icon .. ' ',
+            condition = function()
+                return not vim.bo.modifiable or vim.bo.readonly
             end,
         }
 
-    local ModifiedFlag = args.editable_icon
+    local ModifiedFlag = args.modified_icon
         and {
-            provider = ' ' .. MODIFIED,
+            provider = args.modified_icon .. ' ',
             condition = function(self)
                 return vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
             end,
@@ -111,8 +101,6 @@ return function(args)
         init = function(self)
             self.bufferline =
                 self:new(require('heirline.utils').make_buflist(TablineFileNameBlock), 1)
-
-            print(self.new)
         end,
         provider = function(self)
             return self.bufferline:eval()

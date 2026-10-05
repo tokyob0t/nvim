@@ -7,22 +7,16 @@ return function(...)
         -- hl = 'Normal',
         CurrentFile {
             format = ':t:r',
-            file_icon = true,
+            enable_file_icon = true,
         },
         {
             provider = Icons.common.chevron_right .. ' ',
             update = 'CursorMoved',
             hl = 'NavicSeparator',
             condition = function()
-                local available = require('nvim-navic').is_available()
+                local navic = require('nvim-navic')
 
-                if not available then
-                    return false
-                end
-
-                local location = require('nvim-navic').get_location()
-
-                return #location > 0
+                return navic.is_available() and #navic.get_location() > 0
             end,
         },
         {

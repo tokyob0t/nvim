@@ -2,18 +2,13 @@
     "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
     "runtime": {
         "version": "Lua5.1",
-        "requirePattern": [
-            "lua/?.lua",
-            "lua/?/init.lua"
-        ]
+        "requirePattern": ["lua/?.lua", "lua/?/init.lua"]
+    },
+    "diagnostics": {
+        "disable": ["missing-fields"]
     },
     "workspace": {
-        "library": [
-            "$VIMRUNTIME",
-            "~/.local/share/nvim/lazy/"
-        ]
+        "library": ["$VIMRUNTIME", "~/.local/share/nvim/lazy/"]
     },
-    "diagnostics.globals": [
-        "vim"
-    ]
+    "diagnostics.globals": ["vim"]
 }

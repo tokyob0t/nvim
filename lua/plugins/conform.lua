@@ -53,6 +53,7 @@ return {
             if vim.b[bufnr].disable_autoformat then
                 return
             end
+
             return { timeout_ms = 1000, lsp_format = 'fallback' }
         end,
     },

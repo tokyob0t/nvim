@@ -91,6 +91,10 @@ local mode_groups = {
     t = 'normal',
 }
 
+function string.capitalize(s)
+    return (s:gsub('^%l', string.upper))
+end
+
 return function(...)
     return {
         init = function(self)
@@ -109,7 +113,7 @@ return function(...)
         hl = function(self)
             local group = self.mode_groups[self.mode] or 'normal'
 
-            return 'Status' .. group:sub(1, 1):upper() .. group:sub(2)
+            return 'Status' .. string.capitalize(group)
         end,
 
         update = {
