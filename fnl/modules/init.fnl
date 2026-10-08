@@ -1,0 +1,5 @@
+(require (.. ... :.lazy))
+(require (.. ... :.settings))
+(require (.. ... :.keymaps))
+(require (.. ... :.editor))
+(require (.. ... :.keymaps))
