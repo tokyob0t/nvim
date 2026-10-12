@@ -1,8 +1,8 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'razak17/tailwind-fold.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     -- opts = { symbol = '󰇘' },
-    opts = { symbol = Icons.fold },
+    opts = { symbol = icons.fold },
 }

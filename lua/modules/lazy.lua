@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 local variables = vim.v
 
 local function handleError(err)
@@ -67,15 +67,15 @@ lazy.setup {
             height = 0.9,
         },
         icons = {
-            cmd = Icons.common.terminal,
-            favorite = Icons.common.bookmark,
-            keys = Icons.common.keymap,
-            lazy = Icons.common.lazy,
-            loaded = Icons.package.installed,
-            not_loaded = Icons.package.pending,
-            plugin = Icons.common.plugin,
-            require = Icons.common.lua,
-            source = Icons.common.source,
+            cmd = icons.common.terminal,
+            favorite = icons.common.bookmark,
+            keys = icons.common.keymap,
+            lazy = icons.common.lazy,
+            loaded = icons.package.installed,
+            not_loaded = icons.package.pending,
+            plugin = icons.common.plugin,
+            require = icons.common.lua,
+            source = icons.common.source,
         },
     },
 }

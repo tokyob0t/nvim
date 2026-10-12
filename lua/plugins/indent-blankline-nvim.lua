@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'lukas-reineke/indent-blankline.nvim',
@@ -6,7 +6,7 @@ return {
     ---@type ibl.config
     opts = {
         indent = {
-            char = Icons.indent,
+            char = icons.indent,
         },
         scope = {
             highlight = {

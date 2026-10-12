@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 local TablineOffset = {
     condition = function(self)

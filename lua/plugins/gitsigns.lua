@@ -1,8 +1,8 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'lewis6991/gitsigns.nvim',
     opts = {
-        signs = Icons.gutter,
+        signs = icons.gutter,
     },
 }

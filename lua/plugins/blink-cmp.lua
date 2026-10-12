@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 local options = vim.opt
 
 local function getKindIconText(ctx)
@@ -48,7 +48,7 @@ return {
         },
         appearance = {
             nerd_font_variant = 'mono',
-            kind_icons = Icons.kinds,
+            kind_icons = icons.kinds,
         },
 
         sources = {

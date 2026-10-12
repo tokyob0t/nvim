@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'rahuliyer95/mason.nvim',
@@ -15,9 +15,9 @@ return {
             path = 'skip',
             check_outdated_packages_on_open = true,
             icons = {
-                package_installed = Icons.package.installed,
-                package_pending = Icons.package.pending,
-                package_uninstalled = Icons.package.uninstalled,
+                package_installed = icons.package.installed,
+                package_pending = icons.package.pending,
+                package_uninstalled = icons.package.uninstalled,
             },
         },
     },

@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'SmiteshP/nvim-navic',
@@ -6,7 +6,7 @@ return {
     opts = {
         lsp = { auto_attach = true },
         highlight = true,
-        icons = Icons.kinds,
-        separator = ' ' .. Icons.common.chevron_right .. ' ',
+        icons = icons.kinds,
+        separator = ' ' .. icons.common.chevron_right .. ' ',
     },
 }

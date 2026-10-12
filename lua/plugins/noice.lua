@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'folke/noice.nvim',
@@ -11,24 +11,24 @@ return {
         format = {},
         cmdline = {
             format = {
-                cmdline = { pattern = '^:', icon = Icons.common.terminal .. ' ', lang = 'vim' },
+                cmdline = { pattern = '^:', icon = icons.common.terminal .. ' ', lang = 'vim' },
                 search_down = {
                     kind = 'search',
                     pattern = '^/',
-                    icon = Icons.common.search .. ' ',
+                    icon = icons.common.search .. ' ',
                     lang = 'regex',
                 },
                 search_up = {
                     kind = 'search',
                     pattern = '^%?',
-                    icon = Icons.common.search .. ' ',
+                    icon = icons.common.search .. ' ',
                     lang = 'regex',
                 },
-                replace = { pattern = '^:%%s%/', icon = Icons.common.regex, lang = 'regex' },
+                replace = { pattern = '^:%%s%/', icon = icons.common.regex, lang = 'regex' },
                 filter = { pattern = '^:%s*!', icon = '$', lang = 'bash' },
-                lua = { pattern = '^:%s*lua%s+', icon = Icons.common.lua, lang = 'lua' },
-                help = { pattern = '^:%s*help%s+', icon = Icons.common.help },
-                input = { icon = Icons.common.input .. ' ' },
+                lua = { pattern = '^:%s*lua%s+', icon = icons.common.lua, lang = 'lua' },
+                help = { pattern = '^:%s*help%s+', icon = icons.common.help },
+                input = { icon = icons.common.input .. ' ' },
             },
             opts = {
                 win_options = {

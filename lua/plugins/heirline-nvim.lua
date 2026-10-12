@@ -1,6 +1,6 @@
 local options = vim.opt
 
-local Icons = require('icons')
+local icons = require('icons')
 
 local Navic = require('plugins.heirline-modules.navic')
 
@@ -68,8 +68,8 @@ return {
         tabline = WinBar {
             excluded_filetypes = {},
             Buffers {
-                modified_icon = Icons.tree.git.unstaged,
-                readonly_icon = Icons.tree.git.ignored,
+                modified_icon = icons.tree.git.unstaged,
+                readonly_icon = icons.tree.git.ignored,
             },
         },
 
@@ -83,18 +83,18 @@ return {
             CurrentFile {
                 format = ':t',
                 enable_file_icon = false,
-                modified_icon = Icons.tree.git.unstaged,
-                readonly_icon = Icons.tree.git.ignored,
+                modified_icon = icons.tree.git.unstaged,
+                readonly_icon = icons.tree.git.ignored,
             },
             GitBranch {
                 format = '(λ • #%s)',
             },
             { provider = '%=' }, -- separator
             Diagnostics {
-                error_icon = Icons.diagnostics.error,
-                warn_icon = Icons.diagnostics.warn,
-                info_icon = Icons.diagnostics.info,
-                hint_icon = Icons.diagnostics.hint,
+                error_icon = icons.diagnostics.error,
+                warn_icon = icons.diagnostics.warn,
+                info_icon = icons.diagnostics.info,
+                hint_icon = icons.diagnostics.hint,
             },
             CurrentFileType {},
             CursorPosition {},

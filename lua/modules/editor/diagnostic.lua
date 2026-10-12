@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 local diagnostic = vim.diagnostic
 local Severity = diagnostic.severity
@@ -25,10 +25,10 @@ diagnostic.config {
             min = Severity.INFO,
         },
         text = {
-            [Severity.HINT] = Icons.diagnostics.hint,
-            [Severity.INFO] = Icons.diagnostics.info,
-            [Severity.WARN] = Icons.diagnostics.warn,
-            [Severity.ERROR] = Icons.diagnostics.error,
+            [Severity.HINT] = icons.diagnostics.hint,
+            [Severity.INFO] = icons.diagnostics.info,
+            [Severity.WARN] = icons.diagnostics.warn,
+            [Severity.ERROR] = icons.diagnostics.error,
         },
     },
 }

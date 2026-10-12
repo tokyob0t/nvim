@@ -1,6 +1,6 @@
-local Icons = require('icons')
+local icons = require('icons')
 
-local function button(sc, txt, keybind)
+local function button(txt, sc, keybind)
     local sc_ = sc:gsub('%s', ''):gsub('SPC', '<leader>')
 
     return {
@@ -51,15 +51,12 @@ default.header = {
 
 default.buttons = {
     type = 'group',
-    opts = {
-        spacing = 1,
-    },
+    opts = { spacing = 1 },
     val = {
-        button('    SPC .', Icons.common.search .. '  Find File  ', ':Telescope find_files<CR>'),
-        button('    SPC ,', Icons.common.word .. '  Find Word  ', ':Telescope live_grep<CR>'),
-        button('SPC TAB .', Icons.common.recent .. '  Recent File  ', ':Telescope oldfiles<CR>'),
-        button('SPC TAB ,', Icons.common.bookmark .. '  Bookmarks  ', ':Telescope marks<CR>'),
-        button('    SPC k', Icons.common.keymap .. '  Keymaps', ':Telescope keymaps<CR>'),
+        button(icons.common.search .. '  Find Files ', '    SPC .', '<cmd>FFFindFiles<CR>'),
+        button(icons.common.word .. '  Find Word  ', '    SPC ,', '<cmd>FFFuzzySearch<CR>'),
+        button(icons.common.lua .. '  Lazy', 'SPC l', '<cmd>Lazy<CR>'),
+        button(icons.common.plugin .. '  Mason  ', 'SPC m', '<cmd>Mason<CR>'),
     },
 }
 

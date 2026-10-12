@@ -1,6 +1,6 @@
 local globals = vim.g
 local options = vim.opt
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'nvim-tree/nvim-tree.lua',
@@ -30,8 +30,8 @@ return {
             group_empty = true,
             icons = {
                 git_placement = 'after',
-                symlink_arrow = ' ' .. Icons.common.arrow .. ' ',
-                glyphs = Icons.tree,
+                symlink_arrow = ' ' .. icons.common.arrow .. ' ',
+                glyphs = icons.tree,
             },
         },
     },
