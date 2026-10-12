@@ -1,4 +1,4 @@
-local Icons = require('icons')
+local icons = require('icons')
 
 return {
     'nvim-telescope/telescope.nvim',
@@ -15,7 +15,7 @@ return {
     },
     opts = {
         defaults = {
-            prompt_prefix = ' ' .. Icons.common.search .. '  ',
+            prompt_prefix = ' ' .. icons.common.search .. '  ',
             selection_caret = '  ',
             entry_prefix = '  ',
             sorting_strategy = 'ascending',

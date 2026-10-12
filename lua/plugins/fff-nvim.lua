@@ -6,68 +6,93 @@ return {
     end,
 
     keys = {
-        -- { '<leader>.', '<cmd>Telescope find_files<CR>' },
+        { '<leader>.', '<cmd>FFFindFiles<cr>' },
+        { '<leader>,', '<cmd>FFFuzzySearch<cr>' },
         -- { '<leader><Tab>.', '<cmd>Telescope oldfiles<CR>' },
-        -- { '<leader>,', '<cmd>Telescope live_grep<CR>' },
         -- { '<leader><Tab>,', '<cmd>Telescope marks<CR>' },
         -- { '<leader>k', '<cmd>Telescope keymaps<CR>' },
-        { '<leader>f', "<cmd>lua require('fff').find_files({ title = 'Find Files' })<cr>" },
-        { '<leader>,', "<cmd>lua require('fff').live_grep({ title = 'Live Grep' })<cr>" },
     },
     init = function()
-        local oxocarbon = require('oxocarbon').oxocarbon
-
-        if not oxocarbon then
-            return
-        end
-
-        local set = function(name, color)
-            vim.api.nvim_set_hl(0, name, { default = true, fg = color })
-        end
-
-        vim.api.nvim_set_hl(0, 'IncSearch', {
-            fg = '#3ddbd9',
-        })
-
         vim.api.nvim_set_hl(0, 'NormalTransparent', {
             fg = vim.api.nvim_get_hl(0, { name = 'Normal' }).fg,
             bg = 'NONE',
+        })
+
+        local fff = require('fff')
+
+        vim.api.nvim_create_user_command('FFFindFiles', function()
+            fff.find_files { title = 'Find Files' }
+        end, {
+            desc = 'FFFindFiles',
+        })
+
+        vim.api.nvim_create_user_command('FFFindOldFiles', function() end, {
+            desc = 'FFFindOldFiles',
+        })
+
+        vim.api.nvim_create_user_command('FFFuzzySearch', function()
+            fff.live_grep { title = 'Live Grep' }
+        end, {
+            desc = 'FFFindFiles',
         })
     end,
     opts = {
         prompt = '   ',
         title = 'Find Files',
-        git = { status_text_color = false },
-        file_picker = {
-            fuzzy_query_highlighting = true,
+
+        preview = {
+            line_numbers = false,
+            wrap_lines = false,
+            cursorlineopt = 'both',
         },
+
         layout = {
             width = 0.87,
             height = 0.8,
             preview_size = 0.55,
             prompt_position = 'top',
+            anchor = 'center',
             title_position = 'center',
+            filename_position = 'center',
             show_path_first = true,
-            show_scrollbar = false,
+            show_scrollbar = true,
+            show_file_count = false,
+            border = 'solid',
+        },
+        git = {
+            status_text_color = true,
+            recency = {
+                enabled = false,
+            },
+        },
+        file_picker = {
+            fuzzy_query_highlighting = true,
+        },
+        frecency = { enabled = false },
+        suggestions = { enabled = false },
+        logging = { enabled = false },
+        grep = {
+            location_format = '',
+            trim_whitespace = true,
+            modes = { 'plain', 'regex', 'fuzzy' },
         },
 
-        preview = {
-            line_numbers = false,
-            cursorlineopt = 'both',
-            wrap_lines = false,
+        history = {
+            enabled = false,
         },
 
         hl = {
             title = 'TelescopePromptTitle',
+            -- border = 'FFFFloatBorder',
             border = 'TelescopeBorder',
             normal = 'TelescopeNormal',
             matched = 'TelescopeMatching',
 
             winhl = {
                 prompt = 'Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder,FloatTitle:TelescopePromptTitle',
-                list = 'Normal:TelescopeNormal,FloatBorder:TelescopeResultsBorder,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection',
                 preview = 'Normal:TelescopePreviewNormal,Title:TelescopePreviewTitle,FloatBorder:TelescopePreviewBorder,FloatTitle:TelescopePreviewTitle',
-                file_info = 'Normal:TelescopeNormal,FloatBorder:TelescopeBorder,FloatTitle:TelescopeTitle',
+                -- list = 'Normal:TelescopeNormal,FloatBorder:TelescopeResultsBorder,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection',
+                -- list = 'FloatBorder:Transparent,Border:Transparent',
             },
 
             prompt = 'TelescopePromptPrefix',
