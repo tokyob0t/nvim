@@ -1,4 +1,4 @@
-{[1] :SmiteshP/nvim-navic
+{1 :SmiteshP/nvim-navic
  :opts {:icons {:File " "
                 :Module " "
                 :Namespace " "

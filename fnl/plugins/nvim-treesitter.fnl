@@ -22,6 +22,8 @@
 {1 :nvim-treesitter/nvim-treesitter
  :branch :main
  :build ":TSUpdate"
+ :init (fn [])
+ :lazy false
  :config (fn []
            (local ts (require :nvim-treesitter))
            (-> (ts.install parsers)
@@ -29,6 +31,4 @@
            (vim.api.nvim_create_autocmd :FileType
                                         {:callback (fn [{: buf}]
                                                      (pcall vim.treesitter.start
-                                                            buf))}))
- :init (fn [])
- :lazy false}
+                                                            buf))}))}

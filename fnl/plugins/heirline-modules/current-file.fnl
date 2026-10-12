@@ -35,7 +35,7 @@
      :init (fn [self]
              (set self.filename (vim.api.nvim_buf_get_name 0))
              (set self.extension (vim.fn.fnamemodify self.filename ":e")))
-     [1] (FileIcon enable-file-icon)
-     [2] (FileName nil format)
-     [3] (ReadonlyFlag readonly-icon)
-     [4] (ModifiedFlag modified-icon)}))
+     1 (FileIcon enable-file-icon)
+     2 (FileName nil format)
+     3 (ReadonlyFlag readonly-icon)
+     4 (ModifiedFlag modified-icon)}))

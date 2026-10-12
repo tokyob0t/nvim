@@ -1,22 +1,17 @@
-vim.g.mapleader = ' '
-
--- require('modules.lazy')
--- require('modules.settings')
--- require('modules.keymaps')
--- require('modules.editor')
+local variables = vim.v
+local globals = vim.g
 
 local icons = require('icons')
-local variables = vim.v
-
 local installPlugin = require('utils.installPlugin')
 
--- installPlugin('lazy', 'folke/lazy.nvim', 'stable')
+globals.mapleader = ' '
 
-local nfnl = installPlugin('nfnl.api', 'Olical/nfnl', 'main')
+local hotpot = installPlugin('hotpot', 'rktjmp/hotpot.nvim', 'main')
 
-nfnl['compile-all-files']() -- transpile fnl/example.fnl -> .lua/example.lua
+local ctx = require('hotpot.api').context(vim.fn.stdpath('config'))
 
-package.path = vim.fn.stdpath('config') .. '/.lua/?.lua;' .. package.path
-package.path = vim.fn.stdpath('config') .. '/.lua/?/init.lua;' .. package.path
+if ctx then
+    vim.cmd('Hotpot sync')
+end
 
 require('modules')

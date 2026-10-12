@@ -1,4 +1,4 @@
-{[1] :windwp/nvim-autopairs
+{1 :windwp/nvim-autopairs
  :event :InsertEnter
  :opts {:check_ts true
         :ts_config {:lua [:string :source]

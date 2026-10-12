@@ -15,9 +15,9 @@
 
 (local DEFAULT_EXCLUDED_FILETYPES [:NvimTree.* :Telescope.* :dashboard])
 
-(fn WinBar [{: excluded_filetypes &as args}]
-  {1 [(unpack args)]
-   :static {:excluded_filetypes (or excluded_filetypes
+(fn WinBar [?excluded-filetypes childrens]
+  {1 childrens
+   :static {:excluded_filetypes (or ?excluded_filetypes
                                     DEFAULT_EXCLUDED_FILETYPES)}
    :condition #(let [{: excluded_filetypes} $
                      conditions (require :heirline.conditions)]
@@ -45,31 +45,33 @@
                                                                          2)
                                                                     0))
                                                            (vim.cmd.redrawtabline)))}))
- :opts {:opts {:disable_winbar_cb #(let [{: buf} $
-                                         conditions (require :heirline.conditions)]
-                                     (conditions:buffer_matches {:buftype [:nofile
-                                                                           :prompt
-                                                                           :help
-                                                                           :quickfix]
-                                                                 :filetype [:^git.*
-                                                                            :fugitive
-                                                                            :Trouble
-                                                                            :dashboard]}
-                                                                buf))}
-        :statusline (WinBar {1 (VimMode {})
-                             2 (CurrentFile {:enable_file_icon false
-                                             :format ":t"
-                                             :modified_icon icons.tree.git.unstaged
-                                             :readonly_icon icons.tree.git.ignored})
-                             3 (GitBranch {:format "(λ • #%s)"})
-                             4 {:provider "%="}
-                             5 (Diagnostics {:error_icon icons.diagnostics.error
-                                             :hint_icon icons.diagnostics.hint
-                                             :info_icon icons.diagnostics.info
-                                             :warn_icon icons.diagnostics.warn})
-                             6 (CurrentFileType {})
-                             7 (CursorPosition {})})
-        :tabline (WinBar {1 (Buffers {:modified_icon icons.tree.git.unstaged
-                                      :readonly_icon icons.tree.git.ignored})
-                          :excluded_filetypes {}})
-        :winbar (WinBar {1 (Navic {})})}}
+ :opts {:statusline (WinBar []
+                            [(VimMode {})
+                             (CurrentFile {:enable_file_icon false
+                                           :format ":t"
+                                           :modified_icon icons.tree.git.unstaged
+                                           :readonly_icon icons.tree.git.ignored})
+                             (GitBranch {:format "(λ • #%s)"})
+                             {:provider "%="}
+                             (Diagnostics {:error_icon icons.diagnostics.error
+                                           :hint_icon icons.diagnostics.hint
+                                           :info_icon icons.diagnostics.info
+                                           :warn_icon icons.diagnostics.warn})
+                             (CurrentFileType {})
+                             (CursorPosition {})])
+        :tabline (WinBar []
+                         [(Buffers {:modified_icon icons.tree.git.unstaged
+                                    :readonly_icon icons.tree.git.ignored})])
+        :winbar (WinBar [] [(Navic {})])
+        :opts {:disable_winbar_cb (fn [self]
+                                    (local conditions
+                                           (require :heirline.conditions))
+                                    (conditions:buffer_matches {:buftype [:nofile
+                                                                          :prompt
+                                                                          :help
+                                                                          :quickfix]
+                                                                :filetype [:^git.*
+                                                                           :fugitive
+                                                                           :Trouble
+                                                                           :dashboard]}
+                                                               buf))}}}

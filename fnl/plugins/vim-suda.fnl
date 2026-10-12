@@ -1,2 +1,1 @@
-{[1] :lambdalisue/vim-suda
- :cmd [:SudaRead :SudaWrite]}
+{1 :lambdalisue/vim-suda :cmd [:SudaRead :SudaWrite]}

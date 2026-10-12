@@ -1,7 +1,7 @@
-{[1] :catgoose/nvim-colorizer.lua
+{1 :catgoose/nvim-colorizer.lua
  :event :VeryLazy
  :opts {:user_default_options {:mode :virtualtext
-                               :virtualtext :󱓻
+                               :virtualtext "󱓻"
                                :names true
                                :RGB true
                                :RRGGBB true
