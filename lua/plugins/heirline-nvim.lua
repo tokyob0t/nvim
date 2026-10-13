@@ -13,6 +13,7 @@ local GitBranch = require('plugins.heirline-modules.git-branch')
 local CurrentFileType = require('plugins.heirline-modules.current-file-type')
 
 local Buffers = require('plugins.heirline-modules.buffers')
+local createAutocmd = require('utils.createAutocmd')
 
 local DEFAULT_EXCLUDED_FILETYPES = {
     'NvimTree.*',
@@ -20,6 +21,10 @@ local DEFAULT_EXCLUDED_FILETYPES = {
     -- '[Aa]lpha',
     'dashboard',
 }
+
+function table.filter(tbl, fn)
+    return vim.tbl_filter(fn, tbl)
+end
 
 ---@param args { excluded_filetypes?: string[] }
 local function WinBar(args)
@@ -46,21 +51,22 @@ return {
     event = 'UiEnter',
     init = function()
         options.showtabline = 0
+
         vim.api.nvim_set_hl(0, 'WinBar', { bg = 'NONE' })
 
-        vim.api.nvim_create_autocmd(
+        createAutocmd(
             { 'BufEnter', 'TabEnter', 'BufAdd', 'BufDelete', 'BufModifiedSet', 'BufWritePost' },
-            {
-                callback = vim.schedule_wrap(function()
-                    local count = #vim.tbl_filter(function(bufnr)
-                        return vim.api.nvim_get_option_value('buflisted', { buf = bufnr })
-                    end, vim.api.nvim_list_bufs())
+            vim.schedule_wrap(function()
+                local buffers = vim.api.nvim_list_bufs()
 
-                    -- local count = #vim.fn.getbufinfo { buflisted = 1 }
-                    options.showtabline = (count >= 2) and 2 or 0
-                    vim.cmd.redrawtabline()
-                end),
-            }
+                local count = #table.filter(buffers, function(bufnr)
+                    return vim.api.nvim_get_option_value('buflisted', { buf = bufnr })
+                end)
+
+                options.showtabline = (count >= 2) and 2 or 0
+
+                vim.cmd.redrawtabline()
+            end)
         )
     end,
 

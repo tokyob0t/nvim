@@ -1,3 +1,4 @@
+local createCommand = require('utils.createCommand')
 local globals = vim.g
 
 return {
@@ -5,14 +6,12 @@ return {
     event = 'BufWritePre',
     cmd = 'ConformInfo',
     init = function()
-        vim.api.nvim_create_user_command('ToggleFormat', function()
+        createCommand('ToggleFormat', 'Toggle autoformat-on-save', function()
             local global_state = globals.disable_autoformat
             local buffer_state = globals.disable_autoformat
 
             vim.b.disable_autoformat = not (global_state or buffer_state)
-        end, {
-            desc = 'Toggle autoformat-on-save',
-        })
+        end)
     end,
     opts = {
         formatters_by_ft = {

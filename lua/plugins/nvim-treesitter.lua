@@ -1,5 +1,8 @@
+local createAutocmd = require('utils.createAutocmd')
+
 local parsers = {
     'lua',
+    'fennel',
     'python',
     'vim',
     'html',
@@ -23,19 +26,15 @@ local parsers = {
 
 return {
     'nvim-treesitter/nvim-treesitter',
-    branch = 'main',
     lazy = false,
     build = ':TSUpdate',
-    init = function() end,
     config = function()
         local ts = require('nvim-treesitter')
 
         ts.install(parsers):wait(300000)
 
-        vim.api.nvim_create_autocmd('FileType', {
-            callback = function(args)
-                pcall(vim.treesitter.start, args.buf)
-            end,
-        })
+        createAutocmd({ 'FileType' }, function(args)
+            pcall(vim.treesitter.start, args.buf)
+        end)
     end,
 }
