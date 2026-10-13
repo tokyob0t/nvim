@@ -8,7 +8,7 @@
         "disable": ["missing-fields"]
     },
     "workspace": {
-        "library": ["$VIMRUNTIME", "~/.local/share/nvim/lazy/"]
+        "library": ["$VIMRUNTIME", "~/.local/share/nvim/lazy/", "~/.local/share/nvim/site/pack/hotpot/opt/hotpot-config-cache/"]
     },
     "diagnostics.globals": ["vim"]
 }

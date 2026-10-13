@@ -1,4 +1,7 @@
+(import-macros {: autocmd!} :macros)
+
 (local parsers [:lua
+                :fennel
                 :python
                 :vim
                 :html
@@ -20,15 +23,8 @@
                 :comment])
 
 {1 :nvim-treesitter/nvim-treesitter
- :branch :main
- :build ":TSUpdate"
- :init (fn [])
  :lazy false
- :config (fn []
-           (local ts (require :nvim-treesitter))
-           (-> (ts.install parsers)
-               (: :wait 300000))
-           (vim.api.nvim_create_autocmd :FileType
-                                        {:callback (fn [{: buf}]
-                                                     (pcall vim.treesitter.start
-                                                            buf))}))}
+ :build ":TSUpdate"
+ :config #(let [ts (require :nvim-treesitter)]
+            (ts.install parsers)
+            (autocmd! FileType * `(pcall vim.treesitter.start)))}

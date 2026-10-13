@@ -1,60 +1,62 @@
-(local Icons (require :icons))
-(local options vim.opt)
+(import-macros {: let! : set!} :macros)
 
-(fn getKindIconText [ctx]
-  (local devicons (require :nvim-web-devicons))
-  (if (vim.tbl_contains [:Path] ctx.source_name)
-      (.. " " (tostring (devicons.get_icon ctx.label)) (tostring ctx.icon_gap)
-          " ")
-      (.. (tostring ctx.kind_icon) (tostring ctx.icon_gap))))
+(local icons (require :icons))
 
-(fn getKindIconHighlight [ctx]
-  (local devicons (require :nvim-web-devicons))
-  (var hl ctx.kind_hl)
-  (if (vim.tbl_contains [:Path] ctx.source_name)
-      (let [(dev_icon dev_hl) (devicons.get_icon ctx.label)]
-        (when dev_icon
-          (set hl dev_hl))))
-  hl)
+(fn get-kind-icon-text [ctx]
+  (let [devicons (require :nvim-web-devicons)]
+    (when (vim.tbl_contains [:Path] ctx.source_name)
+      (let [___antifnl_rtn_1___ (.. " "
+                                    (tostring (devicons.get_icon ctx.label))
+                                    (tostring ctx.icon_gap) " ")]
+        (lua "return ___antifnl_rtn_1___")))
+    (.. (tostring ctx.kind_icon) (tostring ctx.icon_gap))))
+
+(fn get-kind-icon-highlight [ctx]
+  (let [devicons (require :nvim-web-devicons)]
+    (var hl ctx.kind_hl)
+    (when (vim.tbl_contains [:Path] ctx.source_name)
+      (local (dev-icon dev-hl) (devicons.get_icon ctx.label))
+      (when dev-icon (set hl dev-hl)))
+    hl))
 
 {1 :saghen/blink.cmp
  :dependencies [:saghen/blink.lib
                 :rafamadriz/friendly-snippets
                 :nvim-tree/nvim-web-devicons]
- :init #(do
-          (set options.completeopt [:menu :menuone :noselect]))
- :opts_extend [:sources.default]
- :opts {:keymap {:preset :enter
-                 :<Tab> [:select_next :fallback]
-                 :<S-Tab> [:select_prev :fallback]}
-        :appearance {:nerd_font_variant :mono :kind_icons Icons.kinds}
-        :sources {:default [:lsp :path :snippets :buffer]}
-        :fuzzy {:implementation :lua}
+ :init #(set! completeopt [:menu :menuone :noselect])
+ :opts {:appearance {:kind_icons icons.kinds :nerd_font_variant :mono}
+        :cmdline {:completion {:documentation {:auto_show true}
+                               :ghost_text {:enabled true
+                                            :show_without_selection true}
+                               :list {:selection {:preselect false}}
+                               :menu {:auto_show true}}
+                  :enabled true
+                  :keymap {:preset :inherit}
+                  :sources {:default [:cmdline :buffer]}}
         :completion {:documentation {:auto_show true}
                      :ghost_text {:enabled true :show_without_selection true}
                      :list {:selection {:preselect false}}
-                     :menu {:draw {:padding [0 1]
-                                   :columns [[:kind_icon]
-                                             {:gap 1
-                                              :width 30
-                                              :label :source_name}]
-                                   :components {:kind_icon {:text getKindIconText
-                                                            :highlight getKindIconHighlight}
-                                                :label {:width {:fill true
-                                                                :max 30}
-                                                        :text (fn [ctx]
-                                                                ctx.label)}
-                                                :source_name {:width {:max 20}
-                                                              :text (fn [ctx]
+                     :menu {:draw {:columns [[:kind_icon]
+                                             {1 :label
+                                              2 :source_name
+                                              :gap 1
+                                              :width 30}]
+                                   :components {:kind_icon {:highlight get-kind-icon-highlight
+                                                            :text get-kind-icon-text}
+                                                :label {:text (fn [ctx]
+                                                                ctx.label)
+                                                        :width {:fill true
+                                                                :max 30}}
+                                                :source_name {:text (fn [ctx]
                                                                       (.. "["
                                                                           ctx.source_name
-                                                                          "]"))}}}}}
-        :cmdline {:enabled true
-                  :keymap {:preset :inherit}
-                  :sources {:default [:cmdline :buffer]}
-                  :completion {:list {:selection {:preselect false}}
-                               :menu {:auto_show true}
-                               :ghost_text {:enabled true
-                                            :show_without_selection true}
-                               :documentation {:auto_show true}}}
-        :term {:enabled false :keymap {:preset :inherit} :sources {}}}}
+                                                                          "]"))
+                                                              :width {:max 20}}}
+                                   :padding [0 1]}}}
+        :fuzzy {:implementation :lua}
+        :keymap {:<S-Tab> [:select_prev :fallback]
+                 :<Tab> [:select_next :fallback]
+                 :preset :enter}
+        :sources {:default [:lsp :path :snippets :buffer]}
+        :term {:enabled false :keymap {:preset :inherit} :sources {}}}
+ :opts_extend [:sources.default]}

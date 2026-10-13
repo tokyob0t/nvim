@@ -1,7 +1,6 @@
 local options = vim.opt
 local variables = vim.v
 
-
 local function handleError(err)
     vim.api.nvim_echo({
         { err, 'ErrorMsg' },

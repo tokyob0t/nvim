@@ -1,22 +1,17 @@
-(local create-user-command vim.api.nvim_create_user_command)
+(import-macros {: command! : custom-set-face!} :macros)
 
 {1 :dmtrKovalenko/fff
- :build #(let [download (require :fff.download)]
-           (download:download_or_build_binary))
+ :build (fn []
+          ((. (require :fff.download) :download_or_build_binary)))
  :init #(let [fff (require :fff)]
-          (vim.api.nvim_set_hl 0 :NormalTransparent
-                               {:bg :NONE
-                                :fg (. (vim.api.nvim_get_hl 0 {:name :Normal})
-                                       :fg)})
-          (create-user-command :FFFindFiles
-                               #(fff.find_files {:title "Find Files"})
-                               {:desc :FFFindFiles})
-          (create-user-command :FFFindOldFiles #nil {:desc :FFFindOldFiles})
-          (create-user-command :FFFuzzySearch
-                               #(fff.live_grep {:title "Live Grep"})
-                               {:desc :FFFindFiles}))
- :keys [[:<leader>. :<cmd>FFFindFiles<cr>]
-        ["<leader>," :<cmd>FFFuzzySearch<cr>]]
+          (command! FFFindFiles `(fff.find_files {:title "Find Files"}))
+          (command! FFFuzzySearch `(fff.live_grep {:title "Live Grep"}))
+          (command! FFFindOldFiles (fn []) {:desc "Find Old Files"})
+          (custom-set-face! :NormalTransparent []
+                            {:bg :NONE
+                             :fg (. (vim.api.nvim_get_hl 0 {:name :Normal}) :fg)}))
+ :keys [[:<leader>. :<cmd>FFFindFiles<CR>]
+        ["<leader>," :<cmd>FFFuzzySearch<CR>]]
  :lazy false
  :opts {:file_picker {:fuzzy_query_highlighting true}
         :frecency {:enabled false}
@@ -30,13 +25,42 @@
              :cursor :TelescopeSelection
              :debug :NormalTransparent
              :directory_path :NormalTransparent
+             :file_info_label :TelescopeResultsTitle
+             :file_info_match_type :TelescopeMatching
+             :file_info_path :Directory
+             :file_info_score_neg :DiagnosticError
+             :file_info_score_pos :DiagnosticOk
+             :file_info_section :TelescopePreviewTitle
+             :file_info_separator :TelescopeBorder
+             :file_info_size :Number
+             :file_info_total_score :Bold
+             :file_info_type :Type
+             :file_info_value :TelescopeNormal
+             :file_info_value_dim :Comment
              :frecency :Number
              :git_deleted :DiffRemoved
              :git_ignored :Comment
              :git_modified :DiffChanged
              :git_renamed :DiffChanged
+             :git_sign_deleted :GitSignsDelete
+             :git_sign_deleted_selected :TelescopeSelection
+             :git_sign_ignored :Comment
+             :git_sign_ignored_selected :TelescopeSelection
+             :git_sign_modified :GitSignsChange
+             :git_sign_modified_selected :TelescopeSelection
+             :git_sign_renamed :GitSignsChange
+             :git_sign_renamed_selected :TelescopeSelection
+             :git_sign_staged :GitSignsAdd
+             :git_sign_staged_selected :TelescopeSelection
+             :git_sign_untracked :NonText
+             :git_sign_untracked_selected :TelescopeSelection
              :git_staged :DiffAdded
              :git_untracked :NonText
+             :grep_fuzzy_active :DiagnosticHint
+             :grep_line_number :LineNr
+             :grep_match :TelescopeMatching
+             :grep_plain_active :Comment
+             :grep_regex_active :DiagnosticInfo
              :matched :TelescopeMatching
              :normal :TelescopeNormal
              :prompt :TelescopePromptPrefix
@@ -49,6 +73,7 @@
                      :prompt "Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder,FloatTitle:TelescopePromptTitle"}}
         :layout {:anchor :center
                  :border :solid
+                 :title_position :center
                  :filename_position :center
                  :height 0.8
                  :preview_size 0.55
@@ -56,7 +81,6 @@
                  :show_file_count false
                  :show_path_first true
                  :show_scrollbar true
-                 :title_position :center
                  :width 0.87}
         :logging {:enabled false}
         :preview {:cursorlineopt :both :line_numbers false :wrap_lines false}

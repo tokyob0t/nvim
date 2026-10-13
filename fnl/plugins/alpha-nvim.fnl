@@ -1,53 +1,49 @@
-(local Icons (require :icons))
-(fn button [sc text keybind]
+(local icons (require :icons))
+
+(fn button [txt sc keybind]
   (let [sc- (: (sc:gsub "%s" "") :gsub :SPC :<leader>)]
-    {:type :button
-     :val text
-     :on_press #(let [key (vim.api.nvim_replace_termcodes sc- true false true)]
-                  (vim.api.nvim_feedkeys key :normal false))
-     :opts {: text
-            :align_shortcut :right
+    {:on_press (fn []
+                 (local key
+                        (vim.api.nvim_replace_termcodes sc- true false true))
+                 (vim.api.nvim_feedkeys key :normal false))
+     :opts {:align_shortcut :right
             :cursor 5
             :hl :AlphaButtons
-            :keymap (if keybind
-                        [:n sc- keybind {:noremap true :silent true}])
+            :keymap (and keybind [:n sc- keybind {:noremap true :silent true}])
             :position :center
             :shortcut sc
-            :width 36}}))
+            :text txt
+            :width 36}
+     :type :button
+     :val txt}))
 
 (local default
-       (let [ascii ["   ⣴⣶⣤⡤⠦⣤⣀⣤⠆     ⣈⣭⣿⣶⣿⣦⣼⣆          "
-                    "    ⠉⠻⢿⣿⠿⣿⣿⣶⣦⠤⠄⡠⢾⣿⣿⡿⠋⠉⠉⠻⣿⣿⡛⣦       "
-                    "          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷    ⠻⠿⢿⣿⣧⣄     "
-                    "           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    "
-                    "          ⢠⣿⣿⣿⠈    ⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   "
-                    "   ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘  ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  "
-                    "  ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   "
-                    " ⣠⣿⠿⠛ ⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  "
-                    " ⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇ ⠛⠻⢷⣄ "
-                    "      ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     "
-                    "       ⠻⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⢀⣀⣤⣾⡿⠃     "]]
-         {: ascii
-          :header {:opts {:hl :Comment :position :center}
-                   :type :text
-                   :val ascii}
-          :buttons {:opts {:spacing 1}
-                    :type :group
-                    :val [(button "    SPC ."
-                                  (.. Icons.common.search "  Find File  ")
-                                  ":Telescope find_files<CR>")
-                          (button "    SPC ,"
-                                  (.. Icons.common.word "  Find Word  ")
-                                  ":Telescope live_grep<CR>")
-                          (button "SPC TAB ."
-                                  (.. Icons.common.recent "  Recent File  ")
-                                  ":Telescope oldfiles<CR>")
-                          (button "SPC TAB ,"
-                                  (.. Icons.common.bookmark "  Bookmarks  ")
-                                  ":Telescope marks<CR>")
-                          (button "    SPC k"
-                                  (.. Icons.common.keymap "  Keymaps")
-                                  ":Telescope keymaps<CR>")]}}))
+       {:ascii ["   ⣴⣶⣤⡤⠦⣤⣀⣤⠆     ⣈⣭⣿⣶⣿⣦⣼⣆          "
+                "    ⠉⠻⢿⣿⠿⣿⣿⣶⣦⠤⠄⡠⢾⣿⣿⡿⠋⠉⠉⠻⣿⣿⡛⣦       "
+                "          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷    ⠻⠿⢿⣿⣧⣄     "
+                "           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    "
+                "          ⢠⣿⣿⣿⠈    ⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   "
+                "   ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘  ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  "
+                "  ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   "
+                " ⣠⣿⠿⠛ ⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  "
+                " ⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇ ⠛⠻⢷⣄ "
+                "      ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     "
+                "       ⠻⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⢀⣀⣤⣾⡿⠃     "]})
+
+(set default.header {:opts {:hl :Comment :position :center}
+                     :type :text
+                     :val default.ascii})
+
+(set default.buttons
+     {:opts {:spacing 1}
+      :type :group
+      :val [(button (.. icons.common.search "  Find Files ") "    SPC ."
+                    :<cmd>FFFindFiles<CR>)
+            (button (.. icons.common.word "  Find Word  ") "    SPC ,"
+                    :<cmd>FFFuzzySearch<CR>)
+            (button (.. icons.common.lua "  Lazy") "SPC l" :<cmd>Lazy<CR>)
+            (button (.. icons.common.plugin "  Mason  ") "SPC m"
+                    :<cmd>Mason<CR>)]})
 
 (fn get-padding [content-height]
   (math.max 2 (math.floor (/ (- (vim.fn.winheight 0) content-height) 2))))
@@ -60,10 +56,10 @@
 (local header-padding (get-padding total-height))
 
 {1 :goolord/alpha-nvim
- :dependencies [:nvim-telescope/telescope.nvim]
+ :dependencies [:dmtrKovalenko/fff]
  :event :VimEnter
- :opts {:layout [{:type :padding :val header-padding}
+ :opts {:opts {:margin 5}
+        :layout [{:type :padding :val header-padding}
                  default.header
                  {:type :padding :val 2}
-                 default.buttons]
-        :opts {:margin 5}}}
+                 default.buttons]}}

@@ -1,5 +1,6 @@
 {:schema :hotpot/2
- :atomic? true
+ :target :cache
+ :atomic? false
  :verbose? true
  :compiler {:allowedGlobals (icollect [k _ (pairs _G)] k)
             :extra-compiler-env {: vim}

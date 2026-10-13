@@ -1,7 +1,4 @@
-(require (.. ... :.lazy))
-
-(print :modules)
-; (require (.. ... :.settings))
-; (require (.. ... :.keymaps))
-; (require (.. ... :.editor))
-; (require (.. ... :.keymaps))
+(require :modules.lazy)
+(require :modules.settings)
+(require :modules.keymaps)
+(require :modules.editor)

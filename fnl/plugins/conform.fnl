@@ -1,16 +1,17 @@
+(import-macros {: command! : custom-set-face!} :macros)
+
 (local globals vim.g)
-(local create-user-command vim.api.nvim_create_user_command)
 
 {1 :stevearc/conform.nvim
  :cmd :ConformInfo
  :event :BufWritePre
- :init #(create-user-command :ToggleFormat
-                             #(do
-                                (local global-state globals.disable_autoformat)
-                                (local buffer-state globals.disable_autoformat)
-                                (set vim.b.disable_autoformat
-                                     (not (or global-state buffer-state))))
-                             {:desc "Toggle autoformat-on-save"})
+ :init #(command! ToggleFormat
+                  `(do
+                     (local global-state globals.disable_autoformat)
+                     (local buffer-state globals.disable_autoformat)
+                     (set vim.b.disable_autoformat
+                          (not (or global-state buffer-state))))
+                  {:desc "Toggle autoformat-on-save"})
  :opts {:format_after_save (fn [bufnr]
                              (when (. vim.b bufnr :disable_autoformat)
                                (lua "return "))
