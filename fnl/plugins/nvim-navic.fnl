@@ -1,35 +1,8 @@
+(local icons (require :icons))
+
 {1 :SmiteshP/nvim-navic
- :opts {:icons {:File " "
-                :Module " "
-                :Namespace " "
-                :Package " "
-                :Class " "
-                :Method " "
-                :Property " "
-                :Field " "
-                :Constructor " "
-                :Enum " "
-                :Interface " "
-                :Function " "
-                :Variable " "
-                :Constant " "
-                :String " "
-                :Number " "
-                :Boolean " "
-                :Array " "
-                :Object " "
-                :Key " "
-                :Null " "
-                :EnumMember " "
-                :Struct " "
-                :Event " "
-                :Operator " "
-                :TypeParameter " "}
+ :lazy false
+ :opts {:highlight true
+        :icons icons.kinds
         :lsp {:auto_attach true}
-        :highlight true
-        :separator "  "
-        :depth_limit 5
-        :depth_limit_indicator "..."
-        :safe_output true
-        :lazy_update_context true
-        :click false}}
+        :separator (.. " " icons.common.chevron_right " ")}}

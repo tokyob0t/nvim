@@ -1,8 +1,7 @@
-(local option vim.opt)
-(local {: colorscheme} vim.cmd)
+(import-macros {: colorscheme : set!} :macros)
 
 {1 :tokyob0t/oxocarbon.nvim
  :build false
  :init #(do
-          (set option.background :dark)
-          (colorscheme :oxocarbon))}
+          (set! background :dark)
+          (colorscheme oxocarbon))}

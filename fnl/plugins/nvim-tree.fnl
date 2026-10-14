@@ -3,7 +3,7 @@
 {1 :nvim-tree/nvim-tree.lua
  :lazy false
  :dependencies [:nvim-tree/nvim-web-devicons]
- :keys [[:<leader>e :<cmd>NvimTreeToggle<cr>]]
+ :keys [[:<leader>e :<cmd>NvimTreeToggle<CR>]]
  :opts {:actions {:open_file {:resize_window true}}
         :disable_netrw true
         :git {:enable true}

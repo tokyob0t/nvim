@@ -12,6 +12,12 @@
                      (set vim.b.disable_autoformat
                           (not (or global-state buffer-state))))
                   {:desc "Toggle autoformat-on-save"})
+ ; :init #(command! ToggleFormat
+ ;                  `(let [global-state vim.g.disable_autoformat
+ ;                         buffer-state vim.g.disable_autoformat]
+ ;                     (set vim.b.disable_autoformat
+ ;                          (not (or global-state buffer-state true))))
+ ;                  {:desc "Toggle autoformat-on-save"})
  :opts {:format_after_save (fn [bufnr]
                              (when (. vim.b bufnr :disable_autoformat)
                                (lua "return "))

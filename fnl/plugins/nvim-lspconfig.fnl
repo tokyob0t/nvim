@@ -11,6 +11,7 @@
                                            :usePlaceholders true}}}
                 :groovyls {}
                 :jdtls {}
+                :jedi_language_server {}
                 :jsonls {}
                 :lemminx {}
                 :marksman {}
@@ -19,7 +20,9 @@
                 :pasls {}
                 :perlpls {}
                 :postgres_lsp {}
-                :pylsp {}
+                :qmlls {:on_init (fn [client]
+                                   (vim.lsp.semantic_tokens.enable false
+                                                                   {:client_id client.id}))}
                 :r_language_server {}
                 :ruff {}
                 :rust_analyzer {}
@@ -34,12 +37,12 @@
                                       :lineFoldingOnly true}}})
 
 {1 :neovim/nvim-lspconfig
- :config (fn []
-           (local capabilities
-                  ((. (require :blink.cmp) :get_lsp_capabilities) default-capabilities))
-           (each [lsp settings (pairs servers)]
-             (local opts {: capabilities})
-             (each [k v (pairs settings)] (tset opts k v))
-             (vim.lsp.config lsp opts)
-             (vim.lsp.enable lsp)))
- :dependencies [:saghen/blink.cmp]}
+ :dependencies [:saghen/blink.cmp]
+ :config #(let [capabilities (-> (require :blink.cmp)
+                                 (: :get_lsp_capabilities default-capabilities))]
+            (each [lsp settings (pairs servers)]
+              (let [opts {: capabilities}]
+                (each [k v (pairs settings)]
+                  (set (. opts k) v))
+                (vim.lsp.config lsp opts)
+                (vim.lsp.enable lsp))))}
