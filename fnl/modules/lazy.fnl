@@ -1,5 +1,4 @@
 (local icons (require :icons))
-(local variables vim.v)
 
 (local install-plugin (require :utils.installPlugin))
 
@@ -15,19 +14,24 @@
       (if (not= file "")
           (vim.fn.fnamemodify file ":t:r")))))
 
+(fn list-fennel-plugins []
+  (let [directory "~/.config/nvim/fnl/plugins"
+        files (list-fennel-files directory)
+        only (or (os.getenv :NVIM_ONLY) "")
+        specs []]
+    (each [_ f (ipairs files)]
+      (when (or (= only "") (not (not (string.find f only))))
+        (let [(_ p) (pcall require (.. :plugins. f))]
+          (when (= (type p) :table)
+            (table.insert specs p)))))
+    specs))
+
 (lazy.setup {:change_detection {:enabled false}
              :checker {:enabled true :notify false}
              :install {:colorscheme [:oxocarbon]}
              :performance {:rtp {:paths [(ctx.locate :destination)]}
                            :reset_packpath false}
-             :spec (let [directory "~/.config/nvim/fnl/plugins"
-                         files (list-fennel-files directory)
-                         only (or (os.getenv :NVIM_ONLY) "")
-                         specs []]
-                     (each [_ f (ipairs files)]
-                       (when (or (= only "") (not (not (string.find f only))))
-                         (table.insert specs (require (.. :plugins. f)))))
-                     specs)
+             :spec (list-fennel-plugins)
              :ui {:border :solid
                   :icons {:cmd icons.common.terminal
                           :favorite icons.common.bookmark

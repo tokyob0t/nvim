@@ -1,1 +1,1 @@
-{1 :rktjmp/hotpot.nvim}
+{1 :rktjmp/hotpot.nvim :opts {}}

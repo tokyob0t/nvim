@@ -43,6 +43,5 @@
             (each [lsp settings (pairs servers)]
               (let [opts {: capabilities}]
                 (each [k v (pairs settings)]
-                  (set (. opts k) v))
-                (vim.lsp.config lsp opts)
+                  (set (. opts k) v)) ; (vim.lsp.config lsp opts)
                 (vim.lsp.enable lsp))))}

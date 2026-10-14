@@ -9,7 +9,7 @@
 (map [:n :i] :<S-Down> :<Down> opt)
 (map :v :<S-Up> ":m '<-2<CR>gv=gv" opt)
 (map :v :<S-Down> ":m '>+1<CR>gv=gv" opt)
-(map :n :<esc> :<esc><cmd>noh<cr> opt)
+(map :n :<esc> :<esc><cmd>noh<CR> opt)
 (map :n :<leader>q cmd.q opt)
 (map :n :<leader>i :o opt)
 (map :n :<leader>I :O opt)

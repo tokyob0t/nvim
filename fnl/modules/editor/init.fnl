@@ -1,2 +1,2 @@
-(require (.. ... :.diagnostic))
-(require (.. ... :.fold))
+(require :modules.editor.diagnostic)
+(require :modules.editor.fold)

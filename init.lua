@@ -8,13 +8,4 @@ globals.mapleader = ' '
 
 local hotpot = installPlugin('hotpot', 'rktjmp/hotpot.nvim', 'main')
 
--- if hotpot then
---     vim.cmd('Hotpot sync')
--- end
-
--- require('modules')
-
-require('modules.lazy')
-require('modules.settings')
-require('modules.keymaps')
-require('modules.editor')
+require('modules')

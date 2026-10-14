@@ -1,6 +1,6 @@
-(local options vim.opt)
+(import-macros {: set! : autocmd! : custom-set-face!} :macros)
+
 (local create-autocmd (require :utils.createAutocmd))
-(local get-option-value vim.api.nvim_get_option_value)
 
 (local icons (require :icons))
 
@@ -14,16 +14,22 @@
 (local CurrentFileType (require :plugins.heirline-modules.current-file-type))
 (local Buffers (require :plugins.heirline-modules.buffers))
 
-(local DEFAULT_EXCLUDED_FILETYPES [:NvimTree.* :Telescope.* :dashboard])
-(local DISABLED_WINBAR_BUFTYPE [:nofile :prompt :help :quickfix])
-(local DISABLED_WINBAR_FILETYPE [:^git.* :fugitive :Trouble :dashboard])
+(local EXCLUDED_FILETYPES [:NvimTree.*
+                           :Telescope.*
+                           :dashboard
+                           :^git.*
+                           :fugitive
+                           :Trouble
+                           :dashboard])
+
+(local EXCLUDED_BUFTYPES [:nofile :prompt :help :quickfix])
 
 (fn WinBar [?excluded-filetypes childrens]
   {1 childrens
-   :static {:excluded_filetypes (or ?excluded-filetypes
-                                    DEFAULT_EXCLUDED_FILETYPES)}
-   :condition (fn [{: excluded_filetypes}] ; (let [c (require :heirline.conditions)] ;   (not (c:buffer_matches {:filetype excluded_filetypes})))
-                )})
+   :static {:excluded_filetypes (or ?excluded-filetypes EXCLUDED_FILETYPES)}
+   :condition (fn [{: excluded_filetypes}]
+                (let [{: buffer_matches} (require :heirline.conditions)]
+                  (not (buffer_matches {:filetype excluded_filetypes}))))})
 
 {1 :rebelot/heirline.nvim
  :dependencies [:SmiteshP/nvim-navic]
@@ -33,17 +39,18 @@
                       :BufAdd
                       :BufDelete
                       :BufModifiedSet
-                      :BufWritePost]]
-          (set options.showtabline 0)
-          (vim.api.nvim_set_hl 0 :WinBar {:bg :NONE})
+                      :BufWritePost]
+              {: nvim_get_option_value} vim.api
+              list-buffers #(collect [_ bufnr (ipairs (vim.api.nvim_list_bufs))]
+                              (if (nvim_get_option_value :buflisted
+                                                         {:buf bufnr})
+                                  bufnr))]
+          (set! showtabline 0)
+          (custom-set-face! :WinBar [] {:bg :NONE})
           (create-autocmd EVENTS
                           (let [_ vim.schedule_wrap]
-                            #(let [count (length (vim.tbl_filter (fn [bufnr]
-                                                                   (get-option-value :buflisted
-                                                                                     {:buf bufnr}))
-                                                                 (vim.api.nvim_list_bufs)))]
-                               (set options.showtabline
-                                    (or (and (>= count 2) 2) 0))
+                            #(let [count (list-buffers)]
+                               (set! showtabline (or (and (>= count 2) 2) 0))
                                (vim.cmd.redrawtabline)))))
  :opts {:statusline (WinBar []
                             [(VimMode {})
@@ -59,11 +66,12 @@
                                            :warn_icon icons.diagnostics.warn})
                              (CurrentFileType {})
                              (CursorPosition {})])
-        :tabline (WinBar []
-                         [(Buffers {:modified_icon icons.tree.git.unstaged
-                                    :readonly_icon icons.tree.git.ignored})])
-        :winbar (WinBar [] [(Navic {})])
-        :opts {:disable_winbar_cb (fn [{: buf}] ; (print (require :heirline.conditions)) ; (let [c (require :heirline.conditions)] ;    (c:buffer_matches {:buftype DISABLED_WINBAR_BUFTYPE
-                                    ;                       :filetype DISABLED_WINBAR_FILETYPE}
-                                    ;                      buf) ;   )
-                                    )}}}
+        :_tabline (WinBar []
+                          [(Buffers {:modified_icon icons.tree.git.unstaged
+                                     :readonly_icon icons.tree.git.ignored})])
+        :_winbar (WinBar [] [(Navic {})])
+        :opts {:disable_winbar_cb (fn [{: buf}]
+                                    (let [{: buffer_matches} (require :heirline.conditions)]
+                                      (buffer_matches {:buftype EXCLUDED_BUFTYPES
+                                                       :filetype EXCLUDED_FILETYPES}
+                                                      buf)))}}}

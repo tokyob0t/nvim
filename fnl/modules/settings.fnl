@@ -5,14 +5,14 @@
 
 (set! updatetime 250)
 (set! timeoutlen 400)
-(set! swapfile false)
+
 (set! conceallevel 2)
 (set! infercase)
 (set! shortmess+ :sWcI)
 (set! signcolumn "yes:2")
 (set! formatoptions [:q :j])
 (set! termguicolors)
-(set! wrap false)
+(set! nowrap)
 (set! cursorline)
 (set! statuscolumn "%C %s%l ")
 (set! splitright)
@@ -23,9 +23,11 @@
 (set! softtabstop 4)
 (set! clipboard :unnamedplus)
 (set! mouse :a)
+
 (set! undofile)
-(set! writebackup false)
-(set! swapfile false)
+(set! nowritebackup)
+(set! noswapfile)
+
 (set! ignorecase)
 (set! smartcase)
 (set! gdefault)

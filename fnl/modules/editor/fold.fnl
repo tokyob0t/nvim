@@ -2,7 +2,7 @@
 
 (local icons (require :icons))
 
-(set! foldenable true)
+(set! foldenable)
 (set! foldcolumn :1)
 (set! foldlevel 99)
 (set! foldlevelstart 99)
