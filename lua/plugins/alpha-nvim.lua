@@ -76,7 +76,7 @@ local header_padding = getPadding(total_height)
 
 return {
     'goolord/alpha-nvim',
-    dependencies = { 'nvim-telescope/telescope.nvim' },
+    dependencies = { 'dmtrKovalenko/fff' },
     event = 'VimEnter',
     opts = {
         opts = {

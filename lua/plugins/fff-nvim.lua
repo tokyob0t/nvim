@@ -91,8 +91,8 @@ return {
 
             winhl = {
                 prompt = 'Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder,FloatTitle:TelescopePromptTitle',
-                preview = 'Normal:TelescopePreviewNormal,Title:TelescopePreviewTitle,FloatBorder:TelescopePreviewBorder,FloatTitle:TelescopePreviewTitle',
-                list = 'Normal:TelescopeNormal,FloatBorder:TelescopeResultsBorder,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection',
+                preview = 'Normal:TelescopePreviewNormal,Title:TelescopePreviewTitle,FloatTitle:TelescopePreviewTitle',
+                list = 'Normal:TelescopeNormal,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection',
                 -- list = 'FloatBorder:Transparent,Border:Transparent',
             },
 

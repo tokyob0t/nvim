@@ -2,8 +2,8 @@
 local servers = {
     clangd = {}, -- C/C++
     ruff = {}, -- Python
-    pylsp = {},
-    -- jedi_language_server = {},
+    -- pylsp = {},
+    jedi_language_server = {},
     jsonls = {}, -- JSON
     ts_ls = {}, -- TypeScript/JavaScript
     astro = {},
@@ -17,6 +17,13 @@ local servers = {
     -- lua_ls = {},              -- Lua
     emmylua_ls = {},
     fennel_ls = {},
+    qmlls = {
+        on_init = function(client)
+            vim.lsp.semantic_tokens.enable(false, {
+                client_id = client.id,
+            })
+        end,
+    },
     rust_analyzer = {}, -- Rust
     perlpls = {}, -- Perl
     marksman = {}, -- Markdown
@@ -59,7 +66,6 @@ local default_capabilities = {
 return {
     'neovim/nvim-lspconfig',
     dependencies = {
-        -- 'SmiteshP/nvim-navic',
         'saghen/blink.cmp',
     },
     config = function()

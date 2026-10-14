@@ -45,6 +45,10 @@ return function(args)
         }
 
     return {
+        init = function(self)
+            self.filename = vim.api.nvim_buf_get_name(0)
+            self.extension = vim.fn.fnamemodify(self.filename, ':e')
+        end,
         update = {
             'BufEnter',
             'BufWinEnter',
@@ -52,11 +56,6 @@ return function(args)
             'BufWritePost',
             'OptionSet',
         },
-
-        init = function(self)
-            self.filename = vim.api.nvim_buf_get_name(0)
-            self.extension = vim.fn.fnamemodify(self.filename, ':e')
-        end,
         FileIcon,
         FileName,
         ReadonlyFlag,

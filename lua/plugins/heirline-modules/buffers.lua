@@ -38,8 +38,10 @@ return function(args)
     local ReadonlyFlag = args.readonly_icon
         and {
             provider = args.readonly_icon .. ' ',
-            condition = function()
-                return not vim.bo.modifiable or vim.bo.readonly
+            condition = function(self)
+                -- return not vim.bo.modifiable or vim.bo.readonly
+                return not vim.api.nvim_get_option_value('modifiable', { buf = self.bufnr })
+                    or vim.api.nvim_get_option_value('readonly', { buf = self.bufnr })
             end,
         }
 

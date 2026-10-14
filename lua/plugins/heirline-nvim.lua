@@ -20,7 +20,12 @@ local DEFAULT_EXCLUDED_FILETYPES = {
     'Telescope.*',
     -- '[Aa]lpha',
     'dashboard',
+    '^git.*',
+    'fugitive',
+    'Trouble',
 }
+
+local DEFAULT_EXCLUDED_BUFTYPES = { 'nofile', 'prompt', 'help', 'quickfix' }
 
 function table.filter(tbl, fn)
     return vim.tbl_filter(fn, tbl)
@@ -71,6 +76,15 @@ return {
     end,
 
     opts = {
+        opts = {
+            disable_winbar_cb = function(args)
+                return require('heirline.conditions').buffer_matches({
+                    buftype = DEFAULT_EXCLUDED_BUFTYPES,
+                    filetype = DEFAULT_EXCLUDED_FILETYPES,
+                }, args.buf)
+            end,
+        },
+
         tabline = WinBar {
             excluded_filetypes = {},
             Buffers {
@@ -102,17 +116,9 @@ return {
                 info_icon = icons.diagnostics.info,
                 hint_icon = icons.diagnostics.hint,
             },
+            -- LSPStatus {},
             CurrentFileType {},
             CursorPosition {},
-        },
-
-        opts = {
-            disable_winbar_cb = function(args)
-                return require('heirline.conditions').buffer_matches({
-                    buftype = { 'nofile', 'prompt', 'help', 'quickfix' },
-                    filetype = { '^git.*', 'fugitive', 'Trouble', 'dashboard' },
-                }, args.buf)
-            end,
         },
     },
 }
