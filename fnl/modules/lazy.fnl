@@ -20,10 +20,13 @@
         only (or (os.getenv :NVIM_ONLY) "")
         specs []]
     (each [_ f (ipairs files)]
-      (when (or (= only "") (not (not (string.find f only))))
-        (let [(_ p) (pcall require (.. :plugins. f))]
-          (when (= (type p) :table)
-            (table.insert specs p)))))
+      (when (or (= only "") (string.find f only))
+        (let [(ok p) (pcall require (.. :plugins. f))]
+          (if (not ok)
+              (vim.notify (.. "Failed to load plugin '" f "':\n" p)
+                          vim.log.levels.ERROR)
+              (when (= (type p) :table)
+                (table.insert specs p))))))
     specs))
 
 (lazy.setup {:change_detection {:enabled false}
