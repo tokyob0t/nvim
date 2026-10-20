@@ -32,6 +32,10 @@ return {
             fg = vim.api.nvim_get_hl(0, { name = 'Normal' }).fg,
             bg = 'NONE',
         })
+        vim.api.nvim_set_hl(0, 'FFFRed', {
+            fg = 'red',
+            bg = 'NONE',
+        })
     end,
 
     opts = {
@@ -90,10 +94,9 @@ return {
             matched = 'TelescopeMatching',
 
             winhl = {
-                prompt = 'Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder,FloatTitle:TelescopePromptTitle',
-                preview = 'Normal:TelescopePreviewNormal,Title:TelescopePreviewTitle,FloatTitle:TelescopePreviewTitle',
+                prompt = 'FloatTitle:TelescopePromptTitle,Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder',
+                preview = 'FloatTitle:TelescopePreviewTitle,Title:TelescopePreviewTitle',
                 list = 'Normal:TelescopeNormal,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection',
-                -- list = 'FloatBorder:Transparent,Border:Transparent',
             },
 
             prompt = 'TelescopePromptPrefix',
@@ -107,14 +110,14 @@ return {
             selected = 'TelescopeSelection',
             selected_active = 'TelescopeSelection',
 
-            git_staged = 'DiffAdded', -- Usa oxocarbon.base07 (verde/cyan de staged)
-            git_modified = 'DiffChanged', -- Usa oxocarbon.base09 (naranja/amarillo de cambio)
-            git_deleted = 'DiffRemoved', -- Usa oxocarbon.base10 (rojo/rosado de borrado)
-            git_renamed = 'DiffChanged', -- Mismo color de modificación
-            git_untracked = 'NonText', -- O puedes usar 'DiffAdded' si prefieres que destaque igual que staged
+            git_staged = 'DiffAdded',
+            git_modified = 'DiffChanged',
+            git_deleted = 'DiffRemoved',
+            git_renamed = 'DiffChanged',
+            git_untracked = 'NonText',
             git_ignored = 'Comment',
 
-            --     -- Git signs
+            -- Git signs
             git_sign_staged = 'GitSignsAdd',
             git_sign_modified = 'GitSignsChange',
             git_sign_deleted = 'GitSignsDelete',
@@ -130,17 +133,17 @@ return {
             git_sign_untracked_selected = 'TelescopeSelection',
             git_sign_ignored_selected = 'TelescopeSelection',
 
-            --     -- Grep highlights
+            -- Grep highlights
             grep_match = 'TelescopeMatching',
             grep_line_number = 'LineNr',
             grep_regex_active = 'DiagnosticInfo',
             grep_plain_active = 'Comment',
             grep_fuzzy_active = 'DiagnosticHint',
 
-            --     -- Suggestions
+            -- Suggestions
             suggestion_header = 'WarningMsg',
 
-            --     -- File info panel
+            -- File info panel
             file_info_section = 'TelescopePreviewTitle',
             file_info_separator = 'TelescopeBorder',
             file_info_label = 'TelescopeResultsTitle',
@@ -153,8 +156,6 @@ return {
             file_info_match_type = 'TelescopeMatching',
             file_info_score_pos = 'DiagnosticOk',
             file_info_score_neg = 'DiagnosticError',
-
-            --     -- Per-window overrides ajustados según Telescope
         },
     },
 }
