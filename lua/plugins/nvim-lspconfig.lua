@@ -67,11 +67,10 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
         'saghen/blink.cmp',
+        'saghen/blink.lib',
     },
     config = function()
         local capabilities = require('blink.cmp').get_lsp_capabilities(default_capabilities)
-        -- local capabilities =
-        --     require('cmp_nvim_lsp').default_capabilities(default_capabilities)
 
         for lsp, settings in pairs(servers) do
             local opts = { capabilities = capabilities }
