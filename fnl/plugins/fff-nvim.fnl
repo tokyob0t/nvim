@@ -6,6 +6,7 @@
  :init #(let [fff (require :fff)]
           (command! FFFindFiles `(fff.find_files {:title "Find Files"}))
           (command! FFFuzzySearch `(fff.live_grep {:title "Live Grep"}))
+          ;; ToDo
           (command! FFFindOldFiles (fn []) {:desc "Find Old Files"})
           (custom-set-face! :FFFNormalTransparent [] {:bg :NONE}))
  :keys [[:<leader>. :<cmd>FFFindFiles<CR>]
@@ -34,17 +35,28 @@
                :modes [:plain :regex :fuzzy]
                :trim_whitespace true}
         :history {:enabled false}
-        :hl {:title :TelescopePromptTitle
-             :border :TelescopeBorder
-             :float_border :TelescopeBorder
+        :hl {:border :TelescopeBorder
+             :combo_header :NormalTransparent
              :cursor :TelescopeSelection
-             :directory_path :CursorLineNr
-             :selected :TelescopeSelection
-             :selected_active :TelescopeSelection
+             :debug :NormalTransparent
+             :directory_path :NormalTransparent
+             :file_info_label :TelescopeResultsTitle
+             :file_info_match_type :TelescopeMatching
+             :file_info_path :Directory
+             :file_info_score_neg :DiagnosticError
+             :file_info_score_pos :DiagnosticOk
+             :file_info_section :TelescopePreviewTitle
+             :file_info_separator :TelescopeBorder
+             :file_info_size :Number
+             :file_info_total_score :Bold
+             :file_info_type :Type
+             :file_info_value :TelescopeNormal
+             :file_info_value_dim :Comment
+             :frecency :Number
              :git_deleted :DiffRemoved
-             :git_ignored :CursorLineNr
-             :git_modified :CursorLineNr
-             :git_renamed :CursorLineNr
+             :git_ignored :Comment
+             :git_modified :DiffChanged
+             :git_renamed :DiffChanged
              :git_sign_deleted :GitSignsDelete
              :git_sign_deleted_selected :TelescopeSelection
              :git_sign_ignored :Comment
@@ -68,7 +80,10 @@
              :normal :TelescopeNormal
              :prompt :TelescopePromptPrefix
              :scrollbar :TelescopeScrollbar
+             :selected :TelescopeSelection
+             :selected_active :TelescopeSelection
              :suggestion_header :WarningMsg
-             :winhl {:prompt "FloatTitle:TelescopePromptTitle,Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder"
-                     :preview "Title:TelescopePreviewTitle,Normal:TelescopePreviewNormal,Border:TelescopeBorder,FloatTitle:TelescopePreviewTitle"
-                     :list "FloatTitle:TelescopeResultsTitle,Normal:TelescopeNormal,CursorLine:TelescopeSelection"}}}}
+             :title :TelescopePromptTitle
+             :winhl {:list "Normal:TelescopeNormal,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection"
+                     :preview "FloatTitle:TelescopePreviewTitle,Title:TelescopePreviewTitle"
+                     :prompt "FloatTitle:TelescopePromptTitle,Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder"}}}}

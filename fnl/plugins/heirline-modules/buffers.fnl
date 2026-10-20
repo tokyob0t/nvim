@@ -1,4 +1,5 @@
 (local icons (require :icons))
+
 (local Tabline-offset
        {:condition (fn [self]
                      (local win (. (vim.api.nvim_tabpage_list_wins 0) 1))
@@ -25,9 +26,11 @@
 
 (fn [args]
   (let [Readonly-flag (and args.readonly_icon
-                           {:condition (fn []
-                                         (or (not vim.bo.modifiable)
-                                             vim.bo.readonly))
+                           {:condition (fn [self]
+                                         (or (not (vim.api.nvim_get_option_value :modifiable
+                                                                                 {:buf self.bufnr}))
+                                             (vim.api.nvim_get_option_value :readonly
+                                                                            {:buf self.bufnr})))
                             :provider (.. args.readonly_icon " ")})
         Modified-flag (and args.modified_icon
                            {:condition (fn [self]
