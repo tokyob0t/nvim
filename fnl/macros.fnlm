@@ -445,19 +445,6 @@
                   (tset :group name))]
     `(vim.api.nvim_clear_autocmds ,options)))
 
-(lambda packadd! [package]
-  "Loads a package using the vim.api.nvim_cmd API.
-  Accepts the following arguements:
-  package -> a symbol.
-  Example of use:
-  ```fennel
-  (packadd! packer.nvim)
-  ```"
-  (let [package (if (sym? package)
-                    (->str package)
-                    package)]
-    `(vim.api.nvim_cmd {:cmd :packadd :args [,package]} {})))
-
 (lambda map! [[modes] lhs rhs ?options]
   "Add a new mapping using the vim.keymap.set API.
 
@@ -581,23 +568,6 @@
     [name value] (let-global! name value)
     _ (error "expected let! to have at least two arguments: name value")))
 
-(lambda verify-dependencies! [dependencies]
-  "Uses the vim.notify API to print a warning for every dependecy that is no
-   available and then executes an early return from the module."
-  `(let [dependencies# ,dependencies
-         info# (debug.getinfo 1 :S)
-         module-name# info#.source
-         module-name# (module-name#:match "@(.*)")
-         not-available# (icollect [_# dependency# (ipairs dependencies#)]
-                          (when (not (pcall require dependency#))
-                            dependency#))]
-     (when (> (length not-available#) 0)
-       (each [_# dependency# (ipairs not-available#)]
-         (vim.notify (string.format "Could not load '%s' as '%s' is not available."
-                                    module-name# dependency#)
-                     vim.log.levels.WARN))
-       (lua "return nil"))))
-
 (lambda sh [...]
   "simple macro to run shell commands inside fennel"
   `(let [str# ,(accumulate [str# "" _ v# (ipairs [...])]
@@ -625,5 +595,7 @@
  : autocmd!
  : augroup!
  : clear!
- : packadd!
- : verify-dependencies!}
+ : nil?
+ : str?
+ : bool?
+ : num?}
