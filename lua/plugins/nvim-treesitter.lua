@@ -33,7 +33,7 @@ return {
 
         ts.install(parsers):wait(300000)
 
-        createAutocmd({ 'FileType' }, function(args)
+        createAutocmd({ 'FileType' }, '*', function(args)
             pcall(vim.treesitter.start, args.buf)
         end)
     end,
