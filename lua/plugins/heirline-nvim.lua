@@ -27,10 +27,6 @@ local DEFAULT_EXCLUDED_FILETYPES = {
 
 local DEFAULT_EXCLUDED_BUFTYPES = { 'nofile', 'prompt', 'help', 'quickfix' }
 
-function table.filter(tbl, fn)
-    return vim.tbl_filter(fn, tbl)
-end
-
 ---@param args { excluded_filetypes?: string[] }
 local function WinBar(args)
     if not args.excluded_filetypes then
@@ -61,6 +57,7 @@ return {
 
         createAutocmd(
             { 'BufEnter', 'TabEnter', 'BufAdd', 'BufDelete', 'BufModifiedSet', 'BufWritePost' },
+            '*',
             vim.schedule_wrap(function()
                 local buffers = vim.api.nvim_list_bufs()
 
