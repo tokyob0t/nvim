@@ -1,30 +1,6 @@
 local icons = require('icons')
 local options = vim.opt
 
-local function getKindIconText(ctx)
-    local devicons = require('nvim-web-devicons')
-
-    if vim.tbl_contains({ 'Path' }, ctx.source_name) then
-        return ' ' .. tostring(devicons.get_icon(ctx.label)) .. tostring(ctx.icon_gap) .. ' '
-    end
-
-    return tostring(ctx.kind_icon) .. tostring(ctx.icon_gap)
-end
-
-local function getKindIconHighlight(ctx)
-    local devicons = require('nvim-web-devicons')
-    local hl = ctx.kind_hl
-
-    if vim.tbl_contains({ 'Path' }, ctx.source_name) then
-        local dev_icon, dev_hl = devicons.get_icon(ctx.label)
-        if dev_icon then
-            hl = dev_hl
-        end
-    end
-
-    return hl
-end
-
 return {
     'saghen/blink.cmp',
     -- build = 'cargo build --release',
@@ -67,8 +43,12 @@ return {
                     columns = { { 'kind_icon' }, { gap = 1, width = 30, 'label', 'source_name' } },
                     components = {
                         kind_icon = {
-                            text = getKindIconText,
-                            highlight = getKindIconHighlight,
+                            text = function(ctx)
+                                return string.format('%s%s', ctx.kind_icon, ctx.icon_gap)
+                            end,
+                            highlight = function(ctx)
+                                return ctx.kind_hl
+                            end,
                         },
 
                         label = {
