@@ -7,6 +7,7 @@
                 :emmet_language_server {:init_options {:showSuggestionsAsSnippets true}}
                 :emmylua_ls {}
                 :fennel_ls {}
+                ; :fennel_language_server {}
                 :gopls {:settings {:gopls {:semanticTokens true
                                            :usePlaceholders true}}}
                 :groovyls {}

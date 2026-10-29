@@ -327,6 +327,10 @@
              buffer option is set to 0. If the buffer option is set this value
              is ignored.
   command -> can be an string, a symbol, a function or a quoted expression.
+             Its return value is always discarded (nil). Neovim deletes an
+             autocommand when its Lua callback returns a truthy value, and
+             fennel implicitly returns the last expression of a function.
+             Use {:once true} if you actually want a one-shot autocommand.
   options -> a table of options. Optional. If the :desc option is not specified
              it will be inferred.
 
@@ -339,7 +343,11 @@
   ```fennel
   (vim.api.nvim_create_autocmd :VimEnter
                                {:pattern \"*.py\"
-                                :callback (fn [] (print \"Hello World\"))
+                                :callback (fn [...]
+                                            (let [callback# (fn []
+                                                              (print \"Hello World\"))]
+                                              (callback# ...)
+                                              nil))
                                 :once true
                                 :group \"custom\"
                                 :desc \"This is a description\"})
@@ -376,9 +384,13 @@
                       (tset :command command))
                     (doto options
                       (tset :callback
-                            (if (quoted? command)
-                                (quoted->fn command)
-                                command))))
+                            (let [callback (if (quoted? command)
+                                               (quoted->fn command)
+                                               command)]
+                              `(fn [...]
+                                 (let [callback# ,callback]
+                                   (callback# ...)
+                                   nil))))))
         options (if (nil? options.desc)
                     (doto options
                       (tset :desc
