@@ -1,3 +1,7 @@
+(import-macros {: let!} :macros)
+
+(let! mapleader " ")
+
 (require :modules.lazy)
 (require :modules.settings)
 (require :modules.keymaps)
