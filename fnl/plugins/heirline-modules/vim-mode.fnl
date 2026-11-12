@@ -34,53 +34,49 @@
                    :v "**"
                    :vs "**"})
 
-(local mode-groups {"\019" :visual
-                    "\022" :visual
-                    "\022s" :visual
-                    :! :normal
-                    :R :replace
-                    :Rc :replace
-                    :Rv :replace
-                    :Rvc :replace
-                    :Rvx :replace
-                    :Rx :replace
-                    :S :visual
-                    :V :visual
-                    :Vs :visual
-                    :c :command
-                    :cv :command
-                    :i :insert
-                    :ic :insert
-                    :ix :insert
-                    :n :normal
-                    :niI :normal
-                    :niR :normal
-                    :niV :normal
-                    :no :normal
-                    "no\022" :normal
-                    :noV :normal
-                    :nov :normal
-                    :nt :normal
-                    :r :normal
-                    :r? :normal
-                    :rm :normal
-                    :s :visual
-                    :t :normal
-                    :v :visual
-                    :vs :visual})
-
-(fn string.capitalize [s]
-  (s:gsub "^%l" string.upper))
+(local mode-groups {"\019" :StatusVisual
+                    "\022" :StatusVisual
+                    "\022s" :StatusVisual
+                    :! :StatusNormal
+                    :R :StatusReplace
+                    :Rc :StatusReplace
+                    :Rv :StatusReplace
+                    :Rvc :StatusReplace
+                    :Rvx :StatusReplace
+                    :Rx :StatusReplace
+                    :S :StatusVisual
+                    :V :StatusVisual
+                    :Vs :StatusVisual
+                    :c :StatusCommand
+                    :cv :StatusCommand
+                    :i :StatusInsert
+                    :ic :StatusInsert
+                    :ix :StatusInsert
+                    :n :StatusNormal
+                    :niI :StatusNormal
+                    :niR :StatusNormal
+                    :niV :StatusNormal
+                    :no :StatusNormal
+                    "no\022" :StatusNormal
+                    :noV :StatusNormal
+                    :nov :StatusNormal
+                    :nt :StatusNormal
+                    :r :StatusNormal
+                    :r? :StatusNormal
+                    :rm :StatusNormal
+                    :s :StatusVisual
+                    :t :StatusNormal
+                    :v :StatusVisual
+                    :vs :StatusVisual})
 
 (fn [...]
   {:init (fn [self]
            (set self.mode (vim.fn.mode 1)))
-   :provider (fn [self]
-               (.. "%2( " (. self.mode_names self.mode) " %)"))
-   :static {:mode_groups mode-groups :mode_names mode-names}
    :update {1 :ModeChanged
-            :callback (vim.schedule_wrap #(vim.cmd :redrawstatus))
-            :pattern "*:*"}
-   :hl (fn [self]
-         (local group (or (. self.mode_groups self.mode) :normal))
-         (.. :Status (string.capitalize group)))})
+            :pattern "*:*"
+            :callback (vim.schedule_wrap #(vim.cmd :redrawstatus))}
+   :provider (fn [{: mode-names : mode}]
+               (.. "%2( " (. mode-names mode) " %)"))
+   :static {: mode-groups : mode-names}
+   :hl (fn [{: mode-groups : mode}]
+         (or (?. mode-groups mode) :StatusNormal))})

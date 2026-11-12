@@ -4,8 +4,10 @@
 
 (local lazy (install-plugin :lazy :folke/lazy.nvim :stable))
 
+(local cfg (vim.fn.stdpath :config))
+
 (local api (require :hotpot.api))
-(local ctx (assert (api.context (vim.fn.stdpath :config))))
+(local ctx (assert (api.context cfg)))
 
 (fn list-fennel-files [path]
   (let [path (.. path :/*.fnl)
@@ -15,26 +17,21 @@
           (vim.fn.fnamemodify file ":t:r")))))
 
 (fn list-fennel-plugins []
-  (let [directory "~/.config/nvim/fnl/plugins"
+  (let [LogLevels vim.log.levels
+        directory (.. cfg :/fnl/plugins)
         files (list-fennel-files directory)
-        only (or (os.getenv :NVIM_ONLY) "")
-        specs []]
-    (each [_ f (ipairs files)]
-      (when (or (= only "") (string.find f only))
-        (let [(ok p) (pcall require (.. :plugins. f))]
-          (if (not ok)
-              (vim.notify (.. "Failed to load plugin '" f "':\n" p)
-                          vim.log.levels.ERROR)
-              (when (= (type p) :table)
-                (table.insert specs p))))))
-    specs))
+        display-error #(vim.notify (.. "Failed to load plugin '" $1 "':\n" $2)
+                                   LogLevels.ERROR)]
+    (icollect [_ file (ipairs files)]
+      (let [mod (.. :plugins. file)
+            (ok p) (pcall require mod)]
+        (if ok p (display-error file p))))))
 
 (lazy.setup {:change_detection {:enabled false}
              :checker {:enabled true :notify false}
-             :install {:colorscheme [:oxocarbon]}
+             :spec (list-fennel-plugins)
              :performance {:rtp {:paths [(ctx.locate :destination)]}
                            :reset_packpath false}
-             :spec (list-fennel-plugins)
              :ui {:border :solid
                   :icons {:cmd icons.common.terminal
                           :favorite icons.common.bookmark

@@ -2,4 +2,5 @@
 
 {1 :lambdalisue/vim-suda
  :event :VeryLazy
- :init (fn [] (let! suda_smart_edit 1))}
+ :init (fn []
+         (let! suda_smart_edit 1))}

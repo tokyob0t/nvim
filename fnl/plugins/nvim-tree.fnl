@@ -11,10 +11,10 @@
         :hijack_directories {:auto_open true :enable true}
         :hijack_netrw true
         :renderer {:group_empty true
+                   :indent_markers {:enable false}
+                   :root_folder_label false
                    :icons {:git_placement :after
                            :glyphs icons.tree
-                           :symlink_arrow (.. " " icons.common.arrow " ")}
-                   :indent_markers {:enable false}
-                   :root_folder_label false}
+                           :symlink_arrow (.. " " icons.common.arrow " ")}}
         :update_cwd true
         :view {:adaptive_size true :side :left :width 25}}}

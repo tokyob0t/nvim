@@ -1,14 +1,18 @@
 (import-macros {: command! : custom-set-face!} :macros)
 
+(local icons (require :icons))
+
 {1 :dmtrKovalenko/fff
  :build #(let [download (require :fff.download)]
            (download:download_or_build_binary))
+ :dependencies ["folke/snacks.nvim"]
  :init #(let [fff (require :fff)]
           (command! FFFindFiles `(fff.find_files {:title "Find Files"}))
           (command! FFFuzzySearch `(fff.live_grep {:title "Live Grep"}))
-          ;; ToDo
           (command! FFFindOldFiles (fn []) {:desc "Find Old Files"})
-          (custom-set-face! :FFFNormalTransparent [] {:bg :NONE}))
+          ;; ToDo
+          (custom-set-face! :FFFNormalTransparent [] {:bg :NONE})
+          (custom-set-face! :FFFRed [] {:fg :red :bg :NONE}))
  :keys [[:<leader>. :<cmd>FFFindFiles<CR>]
         ["<leader>," :<cmd>FFFuzzySearch<CR>]]
  :lazy false
@@ -27,7 +31,7 @@
                  :show_scrollbar true}
         :logging {:enabled false}
         :preview {:cursorlineopt :both :line_numbers false :wrap_lines false}
-        :prompt "   "
+        :prompt (.. " " icons.common.search "  ")
         :suggestions {:enabled false}
         :frecency {:enabled false}
         :git {:recency {:enabled false} :status_text_color true}
@@ -35,7 +39,11 @@
                :modes [:plain :regex :fuzzy]
                :trim_whitespace true}
         :history {:enabled false}
-        :hl {:border :TelescopeBorder
+        :hl {:title :TelescopePromptTitle
+             :winhl {:list "Normal:TelescopeNormal,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection"
+                     :preview "FloatTitle:TelescopePreviewTitle,Title:TelescopePreviewTitle"
+                     :prompt "FloatTitle:TelescopePromptTitle,Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder"}
+             :border :TelescopeBorder
              :combo_header :NormalTransparent
              :cursor :TelescopeSelection
              :debug :NormalTransparent
@@ -51,12 +59,15 @@
              :file_info_total_score :Bold
              :file_info_type :Type
              :file_info_value :TelescopeNormal
-             :file_info_value_dim :Comment
+             :file_info_value_dim :FFFRed
              :frecency :Number
              :git_deleted :DiffRemoved
-             :git_ignored :Comment
-             :git_modified :DiffChanged
-             :git_renamed :DiffChanged
+             :git_ignored :FFFNormalTransparent
+             :git_modified :FFFNormalTransparent
+             :git_renamed :FFFNormalTransparent
+             :git_staged :FFFNormalTransparent
+             :git_untracked :FFFNormalTransparent
+             ;;
              :git_sign_deleted :GitSignsDelete
              :git_sign_deleted_selected :TelescopeSelection
              :git_sign_ignored :Comment
@@ -69,8 +80,6 @@
              :git_sign_staged_selected :TelescopeSelection
              :git_sign_untracked :NonText
              :git_sign_untracked_selected :TelescopeSelection
-             :git_staged :DiffAdded
-             :git_untracked :NonText
              :grep_fuzzy_active :DiagnosticHint
              :grep_line_number :LineNr
              :grep_match :TelescopeMatching
@@ -82,8 +91,4 @@
              :scrollbar :TelescopeScrollbar
              :selected :TelescopeSelection
              :selected_active :TelescopeSelection
-             :suggestion_header :WarningMsg
-             :title :TelescopePromptTitle
-             :winhl {:list "Normal:TelescopeNormal,FloatTitle:TelescopeResultsTitle,CursorLine:TelescopeSelection"
-                     :preview "FloatTitle:TelescopePreviewTitle,Title:TelescopePreviewTitle"
-                     :prompt "FloatTitle:TelescopePromptTitle,Normal:TelescopePromptNormal,FloatBorder:TelescopePromptBorder"}}}}
+             :suggestion_header :WarningMsg}}}

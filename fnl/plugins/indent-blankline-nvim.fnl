@@ -4,10 +4,11 @@
  :main :ibl
  :opts {:indent {:char icons.indent}
         :scope {:exclude {:language [:fennel :clojure :lisp :racket :scheme]}
-                :highlight ["@constant.builtin"
-                            "@punctuation.bracket"
-                            :Keyword
-                            :DiagnosticError
-                            :Todo
-                            :String
-                            :Number]}}}
+                ; :highlight ["@constant.builtin"
+                ;              "@punctuation.bracket"
+                ;              :Keyword
+                ;              :DiagnosticError
+                ;              :Todo
+                ;              :String
+                ;              :Number]
+                }}}

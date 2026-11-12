@@ -1,3 +1,5 @@
+;; fennel-ls: macro-file
+
 ;; Usage: (import-macros {: set! : map! : autocmd!} :macros)
 ;; extracted from https://github.com/nyoom-engineering/nyoom.nvim
 
@@ -23,7 +25,9 @@
 
 (fn ->bool [x]
   "Converts `x` to a boolean."
-  (if x true false))
+  (if x
+      true
+      false))
 
 (fn ->str [x]
   "Converts `x` to a string."
@@ -56,11 +60,11 @@
 ;; Macros
 ;; ---------------------------------------------------------------------------
 
-(lambda expr->str [expr]
+(λ expr->str [expr]
   `(-> (macrodebug ,expr nil (string.gsub "{}" "[]")
                    (string.gsub "_%d+_auto" "#"))))
 
-(lambda extend-fn [fn-name args & body]
+(λ extend-fn [fn-name args & body]
   (assert-compile (sym? fn-name) "expected symbol for fn-name" fn-name)
   (assert-compile (sequence? args) "expected list for args" args)
   (assert-compile (> (length body) 0) "expected at least one statement" body)
@@ -72,30 +76,30 @@
                      ,(unpack body)))
      ,fn-name))
 
-(lambda fn? [x]
+(λ fn? [x]
   "Checks if `x` is a function definition.
   Cannot check if a symbol is a function in compile time."
   (and (list? x) (or (= `fn (car x)) (= `hashfn (car x)) (= `lambda (car x))
                      (= `partial (car x)))))
 
-(lambda quoted? [x]
+(λ quoted? [x]
   "Check if `x` is a list that begins with `quote`."
   (and (list? x) (= `quote (car x))))
 
-(lambda quoted->fn [expr]
+(λ quoted->fn [expr]
   "Converts an expression like `(quote (+ 1 1))` into `(fn [] (+ 1 1))`."
   (assert-compile (quoted? expr) "expected quoted expression for expr" expr)
   (let [non-quoted (. expr 2)]
     `(fn []
        ,non-quoted)))
 
-(lambda quoted->str [expr]
+(λ quoted->str [expr]
   "Converts a quoted expression like `(quote (+ 1 1))` into an string with its shorthand form."
   (assert-compile (quoted? expr) "expected quoted expression for expr" expr)
   (let [non-quoted (. expr 2)]
     (.. "'" (view non-quoted))))
 
-(lambda expand-exprs [exprs]
+(λ expand-exprs [exprs]
   "Converts a list of expressions into either an expression - if only one
   expression is in the list - or a do-expression containing the expressions."
   (if (> (length exprs) 1)
@@ -103,7 +107,7 @@
          ,(unpack exprs))
       (car exprs)))
 
-(lambda gensym-checksum [x ?options]
+(λ gensym-checksum [x ?options]
   "Generates a new symbol from the checksum of the object passed as a parameter
   after it is casted into an string using the `view` function.
   You can also pass a prefix or a suffix into the options optional table.
@@ -113,12 +117,12 @@
         suffix (or options.suffix "")]
     (sym (.. prefix (crypt.djb2 (view x)) suffix))))
 
-(lambda vlua [x]
+(λ vlua [x]
   "Return a symbol mapped to `v:lua.%s()` where `%s` is the symbol."
   (assert-compile (sym? x) "expected symbol for x" x)
   (string.format "v:lua.%s()" (->str x)))
 
-(lambda colorscheme [scheme]
+(λ colorscheme [scheme]
   "Set a colorscheme using the vim.api.nvim_cmd API.
   Accepts the following arguements:
   scheme -> a symbol.
@@ -130,7 +134,7 @@
   (let [scheme (->str scheme)]
     `(vim.api.nvim_cmd {:cmd :colorscheme :args [,scheme]} {})))
 
-(lambda custom-set-face! [name attributes colors]
+(λ custom-set-face! [name attributes colors]
   "Sets a highlight group globally using the vim.api.nvim_set_hl API.
   Accepts the following arguments:
   name -> a string.
@@ -170,7 +174,7 @@
                      true)]
     `(vim.api.nvim_set_hl 0 ,name ,definition)))
 
-(lambda set! [name ?value]
+(λ set! [name ?value]
   "Set a vim option using the vim.opt.<name> API.
   Accepts the following arguments:
   name -> must be a symbol.
@@ -211,7 +215,7 @@
                                 _ `(tset vim.opt ,name ,value))))]
     (expand-exprs exprs)))
 
-(lambda local-set! [name ?value]
+(λ local-set! [name ?value]
   "Set a vim option using the vim.opt_local.<name> API.
   Accepts the following arguments:
   name -> must be a symbol.
@@ -252,7 +256,7 @@
                                 _ `(tset vim.opt_local ,name ,value))))]
     (expand-exprs exprs)))
 
-(lambda shared-command! [api-function name command ?options]
+(λ shared-command! [api-function name command ?options]
   (assert-compile (sym? api-function) "expected symbol for api-function"
                   api-function)
   (assert-compile (sym? name) "expected symbol for name" name)
@@ -274,7 +278,7 @@
         command (if (quoted? command) (quoted->fn command) command)]
     `(,api-function ,name ,command ,options)))
 
-(lambda command! [name command ?options]
+(λ command! [name command ?options]
   "Create a new user command using the vim.api.nvim_create_user_command API.
 
   Accepts the following arguments:
@@ -296,7 +300,7 @@
   ```"
   (shared-command! `vim.api.nvim_create_user_command name command ?options))
 
-(lambda local-command! [name command ?options]
+(λ local-command! [name command ?options]
   "Create a new user command using the vim.api.nvim_buf_create_user_command API.
 
   Accepts the following arguments:
@@ -318,7 +322,7 @@
   ```"
   (shared-command! `vim.api.nvim_buf_create_user_command name command ?options))
 
-(lambda autocmd! [event pattern command ?options]
+(λ autocmd! [event pattern command ?options]
   "Create an autocommand using the nvim_create_autocmd API.
 
   Accepts the following arguments:
@@ -327,10 +331,6 @@
              buffer option is set to 0. If the buffer option is set this value
              is ignored.
   command -> can be an string, a symbol, a function or a quoted expression.
-             Its return value is always discarded (nil). Neovim deletes an
-             autocommand when its Lua callback returns a truthy value, and
-             fennel implicitly returns the last expression of a function.
-             Use {:once true} if you actually want a one-shot autocommand.
   options -> a table of options. Optional. If the :desc option is not specified
              it will be inferred.
 
@@ -343,11 +343,7 @@
   ```fennel
   (vim.api.nvim_create_autocmd :VimEnter
                                {:pattern \"*.py\"
-                                :callback (fn [...]
-                                            (let [callback# (fn []
-                                                              (print \"Hello World\"))]
-                                              (callback# ...)
-                                              nil))
+                                :callback (fn [] (print \"Hello World\"))
                                 :once true
                                 :group \"custom\"
                                 :desc \"This is a description\"})
@@ -384,13 +380,9 @@
                       (tset :command command))
                     (doto options
                       (tset :callback
-                            (let [callback (if (quoted? command)
-                                               (quoted->fn command)
-                                               command)]
-                              `(fn [...]
-                                 (let [callback# ,callback]
-                                   (callback# ...)
-                                   nil))))))
+                            (if (quoted? command)
+                                (quoted->fn command)
+                                command))))
         options (if (nil? options.desc)
                     (doto options
                       (tset :desc
@@ -400,7 +392,7 @@
                     options)]
     `(vim.api.nvim_create_autocmd ,event ,options)))
 
-(lambda augroup! [name ...]
+(λ augroup! [name ...]
   "Create an augroup using the nvim_create_augroup API.
   Accepts either a name or a name and a list of autocmd statements.
 
@@ -436,7 +428,7 @@
                         (let [[_ ?options] expr]
                           `(clear! ,name ,?options)))))))
 
-(lambda clear! [name ?options]
+(λ clear! [name ?options]
   "Clears an augroup using the nvim_clear_autocmds API.
 
   Example of use:
@@ -457,7 +449,7 @@
                   (tset :group name))]
     `(vim.api.nvim_clear_autocmds ,options)))
 
-(lambda map! [[modes] lhs rhs ?options]
+(λ map! [[modes] lhs rhs ?options]
   "Add a new mapping using the vim.keymap.set API.
 
   Accepts the following arguments:
@@ -500,7 +492,7 @@
         rhs (if (quoted? rhs) (quoted->fn rhs) rhs)]
     `(vim.keymap.set ,modes ,lhs ,rhs ,options)))
 
-(lambda buf-map! [[modes] lhs rhs ?options]
+(λ buf-map! [[modes] lhs rhs ?options]
   "Add a new mapping using the vim.keymap.set API.
   Sets by default the buffer option.
 
@@ -536,7 +528,7 @@
                   (tset :buffer 0))]
     (map! [modes] lhs rhs options)))
 
-(lambda let-with-scope! [[scope] name value]
+(λ let-with-scope! [[scope] name value]
   (assert-compile (or (str? scope) (sym? scope))
                   "expected string or symbol for scope" scope)
   (assert-compile (or (= :b (->str scope)) (= :w (->str scope))
@@ -552,13 +544,13 @@
               :t `vim.t
               :g `vim.g) ,name ,value)))
 
-(lambda let-global! [name value]
+(λ let-global! [name value]
   (assert-compile (or (str? name) (sym? name))
                   "expected string or symbol for name" name)
   (let [name (->str name)]
     `(tset vim.g ,name ,value)))
 
-(lambda let! [...]
+(λ let! [...]
   "Set a vim variable using the vim.<scope>.name API.
   Accepts the following arguments:
   [scope] -> optional. Can be either [g], [w], [t] or [b]. It's either a symbol
@@ -580,7 +572,7 @@
     [name value] (let-global! name value)
     _ (error "expected let! to have at least two arguments: name value")))
 
-(lambda sh [...]
+(λ sh [...]
   "simple macro to run shell commands inside fennel"
   `(let [str# ,(accumulate [str# "" _ v# (ipairs [...])]
                  (if (in-scope? v#) `(.. ,str# " " ,v#)

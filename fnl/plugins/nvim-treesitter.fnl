@@ -1,30 +1,12 @@
 (import-macros {: autocmd!} :macros)
 
-(local parsers [:lua
-                :fennel
-                :python
-                :vim
-                :html
-                :html_tags
-                :javascript
-                :css
-                :scss
-                :vimdoc
-                :bash
-                :markdown
-                :rust
-                :xml
-                :json
-                :meson
-                :toml
-                :gitignore
-                :gitcommit
-                :git_config
-                :comment])
+(local parsers (require :parsers))
 
 {1 :nvim-treesitter/nvim-treesitter
  :lazy false
  :build ":TSUpdate"
  :config #(let [ts (require :nvim-treesitter)]
-            (: (ts.install parsers) :wait 300000)
-            (autocmd! FileType * #(pcall vim.treesitter.start $.buf)))}
+            (ts.install parsers)
+            (autocmd! FileType *
+                      (fn [{: buf}]
+                        (local (e e) (pcall vim.treesitter.start buf)))))}

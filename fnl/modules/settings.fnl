@@ -1,8 +1,5 @@
 (import-macros {: let! : set!} :macros)
 
-(let! loaded_netrw 1)
-(let! loaded_netrwPlugin 1)
-
 (set! updatetime 250)
 (set! timeoutlen 400)
 
