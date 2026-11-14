@@ -4,6 +4,7 @@ return {
     ruff = {}, -- Python
     -- pylsp = {},
     jedi_language_server = {},
+    clojure_lsp = {},
     jsonls = {}, -- JSON
     ts_ls = {}, -- TypeScript/JavaScript
     astro = {
@@ -24,8 +25,8 @@ return {
     emmylua_ls = {},
     fennel_ls = {},
     teal_ls = {}, -- Teal
-    swiftlint = {},
-    sourcekit = {},
+    -- swiftlint = {},
+    -- sourcekit = {},
     qmlls = {
         on_init = function(client)
             vim.lsp.semantic_tokens.enable(false, {
