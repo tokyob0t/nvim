@@ -3,139 +3,139 @@
 ;; Usage: (import-macros {: set! : map! : autocmd!} :macros)
 ;; extracted from https://github.com/nyoom-engineering/nyoom.nvim
 
-;; ---------------------------------------------------------------------------
-;; Inlined helpers (from core.lib, core.lib.crypt, core.lib.fun)
-;; ---------------------------------------------------------------------------
-
 (fn nil? [x]
-  "Returns true if the given value is nil, false otherwise."
-  (= nil x))
+ "Returns true if the given value is nil, false otherwise."
+ (= nil x))
 
 (fn str? [x]
-  "Returns true if the given value is a string, false otherwise."
-  (= :string (type x)))
+ "Returns true if the given value is a string, false otherwise."
+ (= :string (type x)))
 
 (fn num? [x]
-  "Returns true if the given value is a number, false otherwise."
-  (= :number (type x)))
+ "Returns true if the given value is a number, false otherwise."
+ (= :number (type x)))
 
 (fn bool? [x]
-  "Returns true if the given value is a boolean, false otherwise."
-  (= :boolean (type x)))
+ "Returns true if the given value is a boolean, false otherwise."
+ (= :boolean (type x)))
+
+(fn true? [x]
+ (and (bool? x) (= true x)))
+
+(fn false? [x]
+ (and (bool? x) (= false x)))
 
 (fn ->bool [x]
-  "Converts `x` to a boolean."
-  (if x
-      true
-      false))
+ "Converts `x` to a boolean."
+ (if x
+     true
+     false))
 
 (fn ->str [x]
-  "Converts `x` to a string."
-  (tostring x))
+ "Converts `x` to a string."
+ (tostring x))
 
 (fn begins-with? [chars str]
-  "Returns true if `str` begins with the Lua pattern `chars`."
-  (->bool (str:match (.. "^" chars))))
+ "Returns true if `str` begins with the Lua pattern `chars`."
+ (->bool (str:match (.. "^" chars))))
 
 ;; luafun's `car` / `all`, reduced to what the macros below actually need.
 (fn car [x]
-  "Returns the first element of a list/sequence."
-  (. x 1))
+ "Returns the first element of a list/sequence."
+ (. x 1))
 
 (fn all [pred xs]
-  "Returns true if `pred` holds for every element of `xs`."
-  (accumulate [ok? true _ v (ipairs xs) &until (not ok?)]
-    (pred v)))
+ "Returns true if `pred` holds for every element of `xs`."
+ (accumulate [ok? true _ v (ipairs xs) &until (not ok?)]
+  (pred v)))
 
 ;; core.lib.crypt
 (local crypt {:djb2 (fn [str]
-                      "Implementation of the hash function djb2."
-                      (let [bytes (icollect [char (str:gmatch ".")]
-                                    (string.byte char))
-                            hash (accumulate [hash 5381 _ byte (ipairs bytes)]
-                                   (+ byte hash (bit.lshift hash 5)))]
-                        (bit.tohex hash)))})
+                     "Implementation of the hash function djb2."
+                     (let [bytes (icollect [char (str:gmatch ".")]
+                                  (string.byte char))
+                           hash (accumulate [hash 5381 _ byte (ipairs bytes)]
+                                 (+ byte hash (bit.lshift hash 5)))]
+                      (bit.tohex hash)))})
 
 ;; ---------------------------------------------------------------------------
 ;; Macros
 ;; ---------------------------------------------------------------------------
 
 (λ expr->str [expr]
-  `(-> (macrodebug ,expr nil (string.gsub "{}" "[]")
-                   (string.gsub "_%d+_auto" "#"))))
+ `(-> (macrodebug ,expr nil (string.gsub "{}" "[]") (string.gsub "_%d+_auto" "#"))))
 
 (λ extend-fn [fn-name args & body]
-  (assert-compile (sym? fn-name) "expected symbol for fn-name" fn-name)
-  (assert-compile (sequence? args) "expected list for args" args)
-  (assert-compile (> (length body) 0) "expected at least one statement" body)
-  (table.insert body `(values (unpack result#)))
-  `(let [old# ,fn-name]
-     (set ,fn-name (fn [...]
-                     (local result# [(old# ...)])
-                     (local [,(unpack args)] result#)
-                     ,(unpack body)))
-     ,fn-name))
+ (assert-compile (sym? fn-name) "expected symbol for fn-name" fn-name)
+ (assert-compile (sequence? args) "expected list for args" args)
+ (assert-compile (> (length body) 0) "expected at least one statement" body)
+ (table.insert body `(values (unpack result#)))
+ `(let [old# ,fn-name]
+   (set ,fn-name (fn [...]
+                  (local result# [(old# ...)])
+                  (local [,(unpack args)] result#)
+                  ,(unpack body)))
+   ,fn-name))
 
 (λ fn? [x]
-  "Checks if `x` is a function definition.
+ "Checks if `x` is a function definition.
   Cannot check if a symbol is a function in compile time."
-  (and (list? x) (or (= `fn (car x)) (= `hashfn (car x)) (= `lambda (car x))
-                     (= `partial (car x)))))
+ (and (list? x) (or (= `fn (car x)) (= `hashfn (car x)) (= `lambda (car x)) (= `partial (car x)))))
 
 (λ quoted? [x]
-  "Check if `x` is a list that begins with `quote`."
-  (and (list? x) (= `quote (car x))))
+ "Check if `x` is a list that begins with `quote`."
+ (and (list? x) (= `quote (car x))))
 
 (λ quoted->fn [expr]
-  "Converts an expression like `(quote (+ 1 1))` into `(fn [] (+ 1 1))`."
-  (assert-compile (quoted? expr) "expected quoted expression for expr" expr)
-  (let [non-quoted (. expr 2)]
-    `(fn []
-       ,non-quoted)))
+ "Converts an expression like `(quote (+ 1 1))` into `(fn [] (+ 1 1))`."
+ (assert-compile (quoted? expr) "expected quoted expression for expr" expr)
+ (let [non-quoted (. expr 2)]
+  `(fn []
+    ,non-quoted)))
 
 (λ quoted->str [expr]
-  "Converts a quoted expression like `(quote (+ 1 1))` into an string with its shorthand form."
-  (assert-compile (quoted? expr) "expected quoted expression for expr" expr)
-  (let [non-quoted (. expr 2)]
-    (.. "'" (view non-quoted))))
+ "Converts a quoted expression like `(quote (+ 1 1))` into an string with its shorthand form."
+ (assert-compile (quoted? expr) "expected quoted expression for expr" expr)
+ (let [non-quoted (. expr 2)]
+  (.. "'" (view non-quoted))))
 
 (λ expand-exprs [exprs]
-  "Converts a list of expressions into either an expression - if only one
+ "Converts a list of expressions into either an expression - if only one
   expression is in the list - or a do-expression containing the expressions."
-  (if (> (length exprs) 1)
-      `(do
-         ,(unpack exprs))
-      (car exprs)))
+ (if (> (length exprs) 1)
+     `(do
+       ,(unpack exprs))
+     (car exprs)))
 
 (λ gensym-checksum [x ?options]
-  "Generates a new symbol from the checksum of the object passed as a parameter
+ "Generates a new symbol from the checksum of the object passed as a parameter
   after it is casted into an string using the `view` function.
   You can also pass a prefix or a suffix into the options optional table.
   This function depends on the djb2 hash function."
-  (let [options (or ?options {})
-        prefix (or options.prefix "")
-        suffix (or options.suffix "")]
-    (sym (.. prefix (crypt.djb2 (view x)) suffix))))
+ (let [options (or ?options {})
+       prefix (or options.prefix "")
+       suffix (or options.suffix "")]
+  (sym (.. prefix (crypt.djb2 (view x)) suffix))))
 
 (λ vlua [x]
-  "Return a symbol mapped to `v:lua.%s()` where `%s` is the symbol."
-  (assert-compile (sym? x) "expected symbol for x" x)
-  (string.format "v:lua.%s()" (->str x)))
+ "Return a symbol mapped to `v:lua.%s()` where `%s` is the symbol."
+ (assert-compile (sym? x) "expected symbol for x" x)
+ (string.format "v:lua.%s()" (->str x)))
 
 (λ colorscheme [scheme]
-  "Set a colorscheme using the vim.api.nvim_cmd API.
+ "Set a colorscheme using the vim.api.nvim_cmd API.
   Accepts the following arguements:
   scheme -> a symbol.
   Example of use:
   ```fennel
   (colorscheme carbon)
   ```"
-  (assert-compile (sym? scheme) "expected symbol for name" scheme)
-  (let [scheme (->str scheme)]
-    `(vim.api.nvim_cmd {:cmd :colorscheme :args [,scheme]} {})))
+ (assert-compile (sym? scheme) "expected symbol for name" scheme)
+ (let [scheme (->str scheme)]
+  `(vim.api.nvim_cmd {:cmd :colorscheme :args [,scheme]} {})))
 
 (λ custom-set-face! [name attributes colors]
-  "Sets a highlight group globally using the vim.api.nvim_set_hl API.
+ "Sets a highlight group globally using the vim.api.nvim_set_hl API.
   Accepts the following arguments:
   name -> a string.
   attributes -> a list of boolean attributes:
@@ -165,17 +165,16 @@
   (vim.api.nvim_set_hl 0 \"Error\" {:fg \"#ff0000\"
                                     :bold true})
   ```"
-  (assert-compile (str? name) "expected string for name" name)
-  (assert-compile (table? attributes) "expected table for attributes"
-                  attributes)
-  (assert-compile (table? colors) "expected colors for colors" colors)
-  (let [definition (collect [_ attr (ipairs attributes) &into colors]
-                     (->str attr)
-                     true)]
-    `(vim.api.nvim_set_hl 0 ,name ,definition)))
+ (assert-compile (str? name) "expected string for name" name)
+ (assert-compile (table? attributes) "expected table for attributes" attributes)
+ (assert-compile (table? colors) "expected colors for colors" colors)
+ (let [definition (collect [_ attr (ipairs attributes) &into colors]
+                   (->str attr)
+                   true)]
+  `(vim.api.nvim_set_hl 0 ,name ,definition)))
 
 (λ set! [name ?value]
-  "Set a vim option using the vim.opt.<name> API.
+ "Set a vim option using the vim.opt.<name> API.
   Accepts the following arguments:
   name -> must be a symbol.
           - If it ends with '+' it appends to the current value.
@@ -186,37 +185,33 @@
              as a boolean value.
            - If it is a quoted expression or a function it becomes
              v:lua.<symbol>()."
-  (assert-compile (sym? name) "expected symbol for name" name)
-  (let [name (->str name)
-        value (if (nil? ?value)
-                  (not (begins-with? :no name))
-                  ?value)
-        value (if (quoted? value)
-                  (quoted->fn value)
-                  value)
-        name (if (and (nil? ?value) (begins-with? :no name))
-                 (name:match "^no(.+)$")
-                 name)
-        exprs (if (fn? value) [`(tset _G
-                                      ,(->str (gensym-checksum value
-                                                               {:prefix "__"}))
-                                      ,value)] [])
-        value (if (fn? value)
-                  (vlua (gensym-checksum value {:prefix "__"}))
-                  value)
-        exprs (doto exprs
-                (table.insert (match (name:sub -1)
-                                "+" `(: (. vim.opt ,(name:sub 1 -2)) :append
-                                        ,value)
-                                "-" `(: (. vim.opt ,(name:sub 1 -2)) :remove
-                                        ,value)
-                                "^" `(: (. vim.opt ,(name:sub 1 -2)) :prepend
-                                        ,value)
-                                _ `(tset vim.opt ,name ,value))))]
-    (expand-exprs exprs)))
+ (assert-compile (sym? name) "expected symbol for name" name)
+ (let [name (->str name)
+       value (if (nil? ?value)
+                 (not (begins-with? :no name))
+                 ?value)
+       value (if (quoted? value)
+                 (quoted->fn value)
+                 value)
+       name (if (and (nil? ?value) (begins-with? :no name))
+                (name:match "^no(.+)$")
+                name)
+       exprs (if (fn? value)
+                 [`(tset _G ,(->str (gensym-checksum value {:prefix "__"})) ,value)]
+                 [])
+       value (if (fn? value)
+                 (vlua (gensym-checksum value {:prefix "__"}))
+                 value)
+       exprs (doto exprs
+              (table.insert (match (name:sub -1)
+                             "+" `(: (. vim.opt ,(name:sub 1 -2)) :append ,value)
+                             "-" `(: (. vim.opt ,(name:sub 1 -2)) :remove ,value)
+                             "^" `(: (. vim.opt ,(name:sub 1 -2)) :prepend ,value)
+                             _ `(tset vim.opt ,name ,value))))]
+  (expand-exprs exprs)))
 
 (λ local-set! [name ?value]
-  "Set a vim option using the vim.opt_local.<name> API.
+ "Set a vim option using the vim.opt_local.<name> API.
   Accepts the following arguments:
   name -> must be a symbol.
           - If it ends with '+' it appends to the current value.
@@ -227,59 +222,50 @@
              as a boolean value.
            - If it is a quoted expression or a function it becomes
              v:lua.<symbol>()."
-  (assert-compile (sym? name) "expected symbol for name" name)
-  (let [name (->str name)
-        value (if (nil? ?value)
-                  (not (begins-with? :no name))
-                  ?value)
-        value (if (quoted? value)
-                  (quoted->fn value)
-                  value)
-        name (if (and (nil? ?value) (begins-with? :no name))
-                 (name:match "^no(.+)$")
-                 name)
-        exprs (if (fn? value) [`(tset _G
-                                      ,(->str (gensym-checksum value
-                                                               {:prefix "__"}))
-                                      ,value)] [])
-        value (if (fn? value)
-                  (vlua (gensym-checksum value {:prefix "__"}))
-                  value)
-        exprs (doto exprs
-                (table.insert (match (name:sub -1)
-                                "+" `(: (. vim.opt_local ,(name:sub 1 -2))
-                                        :append ,value)
-                                "-" `(: (. vim.opt_local ,(name:sub 1 -2))
-                                        :remove ,value)
-                                "^" `(: (. vim.opt_local ,(name:sub 1 -2))
-                                        :prepend ,value)
-                                _ `(tset vim.opt_local ,name ,value))))]
-    (expand-exprs exprs)))
+ (assert-compile (sym? name) "expected symbol for name" name)
+ (let [name (->str name)
+       value (if (nil? ?value)
+                 (not (begins-with? :no name))
+                 ?value)
+       value (if (quoted? value)
+                 (quoted->fn value)
+                 value)
+       name (if (and (nil? ?value) (begins-with? :no name))
+                (name:match "^no(.+)$")
+                name)
+       exprs (if (fn? value)
+                 [`(tset _G ,(->str (gensym-checksum value {:prefix "__"})) ,value)]
+                 [])
+       value (if (fn? value)
+                 (vlua (gensym-checksum value {:prefix "__"}))
+                 value)
+       exprs (doto exprs
+              (table.insert (match (name:sub -1)
+                             "+" `(: (. vim.opt_local ,(name:sub 1 -2)) :append ,value)
+                             "-" `(: (. vim.opt_local ,(name:sub 1 -2)) :remove ,value)
+                             "^" `(: (. vim.opt_local ,(name:sub 1 -2)) :prepend ,value)
+                             _ `(tset vim.opt_local ,name ,value))))]
+  (expand-exprs exprs)))
 
 (λ shared-command! [api-function name command ?options]
-  (assert-compile (sym? api-function) "expected symbol for api-function"
-                  api-function)
-  (assert-compile (sym? name) "expected symbol for name" name)
-  (assert-compile (or (str? command) (sym? command) (fn? command)
-                      (quoted? command))
-                  "expected string, symbol, function or quoted expression for command"
-                  command)
-  (assert-compile (or (nil? ?options) (table? ?options))
-                  "expected table for options" ?options)
-  (let [name (->str name)
-        options (or ?options {})
-        options (if (nil? options.desc)
-                    (doto options
-                      (tset :desc
-                            (if (quoted? command) (quoted->str command)
-                                (str? command) command
-                                (view command))))
-                    options)
-        command (if (quoted? command) (quoted->fn command) command)]
-    `(,api-function ,name ,command ,options)))
+ (assert-compile (sym? api-function) "expected symbol for api-function" api-function)
+ (assert-compile (sym? name) "expected symbol for name" name)
+ (assert-compile (or (str? command) (sym? command) (fn? command) (quoted? command))
+  "expected string, symbol, function or quoted expression for command" command)
+ (assert-compile (or (nil? ?options) (table? ?options)) "expected table for options" ?options)
+ (let [name (->str name)
+       options (or ?options {})
+       options (if (nil? options.desc)
+                   (doto options
+                    (tset :desc (if (quoted? command) (quoted->str command)
+                                    (str? command) command
+                                    (view command))))
+                   options)
+       command (if (quoted? command) (quoted->fn command) command)]
+  `(,api-function ,name ,command ,options)))
 
 (λ command! [name command ?options]
-  "Create a new user command using the vim.api.nvim_create_user_command API.
+ "Create a new user command using the vim.api.nvim_create_user_command API.
 
   Accepts the following arguments:
   name -> must be a symbol.
@@ -298,10 +284,10 @@
                                     {:bang true
                                      :desc \"This is a description\"})
   ```"
-  (shared-command! `vim.api.nvim_create_user_command name command ?options))
+ (shared-command! `vim.api.nvim_create_user_command name command ?options))
 
 (λ local-command! [name command ?options]
-  "Create a new user command using the vim.api.nvim_buf_create_user_command API.
+ "Create a new user command using the vim.api.nvim_buf_create_user_command API.
 
   Accepts the following arguments:
   name -> must be a symbol.
@@ -320,10 +306,10 @@
                                         {:bang true
                                          :desc \"This is a description\"})
   ```"
-  (shared-command! `vim.api.nvim_buf_create_user_command name command ?options))
+ (shared-command! `vim.api.nvim_buf_create_user_command name command ?options))
 
 (λ autocmd! [event pattern command ?options]
-  "Create an autocommand using the nvim_create_autocmd API.
+ "Create an autocommand using the nvim_create_autocmd API.
 
   Accepts the following arguments:
   event -> can be either a symbol or a list of symbols.
@@ -348,52 +334,46 @@
                                 :group \"custom\"
                                 :desc \"This is a description\"})
   ```"
-  (assert-compile (or (sym? event) (and (table? event) (all #(sym? $) event))
-                      "expected symbol or list of symbols for event" event))
-  (assert-compile (or (sym? pattern)
-                      (and (table? pattern) (all #(sym? $) pattern))
-                      "expected symbol or list of symbols for pattern" pattern))
-  (assert-compile (or (str? command) (sym? command) (fn? command)
-                      (quoted? command))
-                  "expected string, symbol, function or quoted expression for command"
-                  command)
-  (assert-compile (or (nil? ?options) (table? ?options))
-                  "expected table for options" ?options)
-  (let [event (if (and (table? event) (not (sym? event)))
-                  (icollect [_ v (ipairs event)]
+ (assert-compile (or (sym? event) (and (table? event) (all #(sym? $) event))
+                  "expected symbol or list of symbols for event" event))
+ (assert-compile (or (sym? pattern) (and (table? pattern) (all #(sym? $) pattern))
+                  "expected symbol or list of symbols for pattern" pattern))
+ (assert-compile (or (str? command) (sym? command) (fn? command) (quoted? command))
+  "expected string, symbol, function or quoted expression for command" command)
+ (assert-compile (or (nil? ?options) (table? ?options)) "expected table for options" ?options)
+ (let [event (if (and (table? event) (not (sym? event)))
+                 (icollect [_ v (ipairs event)]
+                  (->str v))
+                 (->str event))
+       pattern (if (and (table? pattern) (not (sym? pattern)))
+                   (icollect [_ v (ipairs pattern)]
                     (->str v))
-                  (->str event))
-        pattern (if (and (table? pattern) (not (sym? pattern)))
-                    (icollect [_ v (ipairs pattern)]
-                      (->str v))
-                    (->str pattern))
-        options (or ?options {})
-        options (if (nil? options.buffer)
-                    (if (= :<buffer> pattern)
-                        (doto options
-                          (tset :buffer 0))
-                        (doto options
-                          (tset :pattern pattern)))
-                    options)
-        options (if (str? command)
-                    (doto options
-                      (tset :command command))
-                    (doto options
-                      (tset :callback
-                            (if (quoted? command)
-                                (quoted->fn command)
-                                command))))
-        options (if (nil? options.desc)
-                    (doto options
-                      (tset :desc
-                            (if (quoted? command) (quoted->str command)
-                                (str? command) command
-                                (view command))))
-                    options)]
-    `(vim.api.nvim_create_autocmd ,event ,options)))
+                   (->str pattern))
+       options (or ?options {})
+       options (if (nil? options.buffer)
+                   (if (= :<buffer> pattern)
+                       (doto options
+                        (tset :buffer 0))
+                       (doto options
+                        (tset :pattern pattern)))
+                   options)
+       options (if (str? command)
+                   (doto options
+                    (tset :command command))
+                   (doto options
+                    (tset :callback (if (quoted? command)
+                                        (quoted->fn command)
+                                        command))))
+       options (if (nil? options.desc)
+                   (doto options
+                    (tset :desc (if (quoted? command) (quoted->str command)
+                                    (str? command) command
+                                    (view command))))
+                   options)]
+  `(vim.api.nvim_create_autocmd ,event ,options)))
 
 (λ augroup! [name ...]
-  "Create an augroup using the nvim_create_augroup API.
+ "Create an augroup using the nvim_create_augroup API.
   Accepts either a name or a name and a list of autocmd statements.
 
   Example of use:
@@ -409,27 +389,22 @@
     (autocmd! Filetype *.py '(print \"Hello World\") {:group \"a-nice-group\"})
     (autocmd! Filetype *.sh '(print \"Hello World\") {:group \"a-nice-group\"}))
   ```"
-  (assert-compile (or (str? name) (sym? name))
-                  "expected string or symbol for name" name)
-  (assert-compile (all #(and (list? $)
-                             (or (= `clear! (car $)) (= `autocmd! (car $))))
-                       [...])
-                  "expected autocmd exprs for body" ...)
-  (expand-exprs (let [name (->str name)]
-                  (icollect [_ expr (ipairs [...])
-                             &into [`(vim.api.nvim_create_augroup ,name
-                                                                  {:clear false})]]
-                    (if (= `autocmd! (car expr))
-                        (let [[_ event pattern command ?options] expr
-                              options (or ?options {})
-                              options (doto options
-                                        (tset :group name))]
-                          `(autocmd! ,event ,pattern ,command ,options))
-                        (let [[_ ?options] expr]
-                          `(clear! ,name ,?options)))))))
+ (assert-compile (or (str? name) (sym? name)) "expected string or symbol for name" name)
+ (assert-compile (all #(and (list? $) (or (= `clear! (car $)) (= `autocmd! (car $)))) [...])
+  "expected autocmd exprs for body" ...)
+ (expand-exprs (let [name (->str name)]
+                (icollect [_ expr (ipairs [...]) &into [`(vim.api.nvim_create_augroup ,name {:clear false})]]
+                 (if (= `autocmd! (car expr))
+                     (let [[_ event pattern command ?options] expr
+                           options (or ?options {})
+                           options (doto options
+                                    (tset :group name))]
+                      `(autocmd! ,event ,pattern ,command ,options))
+                     (let [[_ ?options] expr]
+                      `(clear! ,name ,?options)))))))
 
 (λ clear! [name ?options]
-  "Clears an augroup using the nvim_clear_autocmds API.
+ "Clears an augroup using the nvim_clear_autocmds API.
 
   Example of use:
   ```fennel
@@ -439,18 +414,16 @@
   ```fennel
   (vim.api.nvim_clear_autocmds {:group \"some-group\"})
   ```"
-  (assert-compile (or (str? name) (sym? name))
-                  "expected string or symbol for name" name)
-  (assert-compile (or (nil? ?options) (table? ?options))
-                  "expected table for options" ?options)
-  (let [name (->str name)
-        options (or ?options {})
-        options (doto options
-                  (tset :group name))]
-    `(vim.api.nvim_clear_autocmds ,options)))
+ (assert-compile (or (str? name) (sym? name)) "expected string or symbol for name" name)
+ (assert-compile (or (nil? ?options) (table? ?options)) "expected table for options" ?options)
+ (let [name (->str name)
+       options (or ?options {})
+       options (doto options
+                (tset :group name))]
+  `(vim.api.nvim_clear_autocmds ,options)))
 
 (λ map! [[modes] lhs rhs ?options]
-  "Add a new mapping using the vim.keymap.set API.
+ "Add a new mapping using the vim.keymap.set API.
 
   Accepts the following arguments:
   modes -> is a sequence containing a symbol, each character of the symbol is
@@ -472,28 +445,25 @@
                    :buffer 0
                    :desc \"This is a description\"})
   ```"
-  (assert-compile (sym? modes) "expected symbol for modes" modes)
-  (assert-compile (str? lhs) "expected string for lhs" lhs)
-  (assert-compile (or (str? rhs) (sym? rhs) (fn? rhs) (quoted? rhs))
-                  "expected string, symbol, function or quoted expression for rhs"
-                  rhs)
-  (assert-compile (or (nil? ?options) (table? ?options))
-                  "expected table for options" ?options)
-  (let [modes (icollect [char (string.gmatch (->str modes) ".")]
-                char)
-        options (or ?options {})
-        options (if (nil? options.desc)
-                    (doto options
-                      (tset :desc
-                            (if (quoted? rhs) (quoted->str rhs)
-                                (str? rhs) rhs
-                                (view rhs))))
-                    options)
-        rhs (if (quoted? rhs) (quoted->fn rhs) rhs)]
-    `(vim.keymap.set ,modes ,lhs ,rhs ,options)))
+ (assert-compile (sym? modes) "expected symbol for modes" modes)
+ (assert-compile (str? lhs) "expected string for lhs" lhs)
+ (assert-compile (or (str? rhs) (sym? rhs) (fn? rhs) (quoted? rhs))
+  "expected string, symbol, function or quoted expression for rhs" rhs)
+ (assert-compile (or (nil? ?options) (table? ?options)) "expected table for options" ?options)
+ (let [modes (icollect [char (string.gmatch (->str modes) ".")]
+              char)
+       options (or ?options {})
+       options (if (nil? options.desc)
+                   (doto options
+                    (tset :desc (if (quoted? rhs) (quoted->str rhs)
+                                    (str? rhs) rhs
+                                    (view rhs))))
+                   options)
+       rhs (if (quoted? rhs) (quoted->fn rhs) rhs)]
+  `(vim.keymap.set ,modes ,lhs ,rhs ,options)))
 
 (λ buf-map! [[modes] lhs rhs ?options]
-  "Add a new mapping using the vim.keymap.set API.
+ "Add a new mapping using the vim.keymap.set API.
   Sets by default the buffer option.
 
   Accepts the following arguments:
@@ -516,42 +486,36 @@
                    :buffer 0
                    :desc \"This is a description\"})
   ```"
-  (assert-compile (sym? modes) "expected symbol for modes" modes)
-  (assert-compile (str? lhs) "expected string for lhs" lhs)
-  (assert-compile (or (str? rhs) (sym? rhs) (fn? rhs) (quoted? rhs))
-                  "expected string, symbol, function or quoted expression for rhs"
-                  rhs)
-  (assert-compile (or (nil? ?options) (table? ?options))
-                  "expected table for options" ?options)
-  (let [options (or ?options {})
-        options (doto options
-                  (tset :buffer 0))]
-    (map! [modes] lhs rhs options)))
+ (assert-compile (sym? modes) "expected symbol for modes" modes)
+ (assert-compile (str? lhs) "expected string for lhs" lhs)
+ (assert-compile (or (str? rhs) (sym? rhs) (fn? rhs) (quoted? rhs))
+  "expected string, symbol, function or quoted expression for rhs" rhs)
+ (assert-compile (or (nil? ?options) (table? ?options)) "expected table for options" ?options)
+ (let [options (or ?options {})
+       options (doto options
+                (tset :buffer 0))]
+  (map! [modes] lhs rhs options)))
 
 (λ let-with-scope! [[scope] name value]
-  (assert-compile (or (str? scope) (sym? scope))
-                  "expected string or symbol for scope" scope)
-  (assert-compile (or (= :b (->str scope)) (= :w (->str scope))
-                      (= :t (->str scope)) (= :g (->str scope)))
-                  "expected scope to be either b, w, t or g" scope)
-  (assert-compile (or (str? name) (sym? name))
-                  "expected string or symbol for name" name)
-  (let [name (->str name)
-        scope (->str scope)]
-    `(tset ,(match scope
-              :b `vim.b
-              :w `vim.w
-              :t `vim.t
-              :g `vim.g) ,name ,value)))
+ (assert-compile (or (str? scope) (sym? scope)) "expected string or symbol for scope" scope)
+ (assert-compile (or (= :b (->str scope)) (= :w (->str scope)) (= :t (->str scope)) (= :g (->str scope)))
+  "expected scope to be either b, w, t or g" scope)
+ (assert-compile (or (str? name) (sym? name)) "expected string or symbol for name" name)
+ (let [name (->str name)
+       scope (->str scope)]
+  `(tset ,(match scope
+           :b `vim.b
+           :w `vim.w
+           :t `vim.t
+           :g `vim.g) ,name ,value)))
 
 (λ let-global! [name value]
-  (assert-compile (or (str? name) (sym? name))
-                  "expected string or symbol for name" name)
-  (let [name (->str name)]
-    `(tset vim.g ,name ,value)))
+ (assert-compile (or (str? name) (sym? name)) "expected string or symbol for name" name)
+ (let [name (->str name)]
+  `(tset vim.g ,name ,value)))
 
 (λ let! [...]
-  "Set a vim variable using the vim.<scope>.name API.
+ "Set a vim variable using the vim.<scope>.name API.
   Accepts the following arguments:
   [scope] -> optional. Can be either [g], [w], [t] or [b]. It's either a symbol
              or a string surrounded by square brackets.
@@ -567,21 +531,45 @@
   (tset vim.g :hello :world)
   (tset vim.w :hello :world)
   ```"
-  (match [...]
-    [[scope] name value] (let-with-scope! [scope] name value)
-    [name value] (let-global! name value)
-    _ (error "expected let! to have at least two arguments: name value")))
+ (match [...]
+  [[scope] name value] (let-with-scope! [scope] name value)
+  [name value] (let-global! name value)
+  _ (error "expected let! to have at least two arguments: name value")))
 
 (λ sh [...]
-  "simple macro to run shell commands inside fennel"
-  `(let [str# ,(accumulate [str# "" _ v# (ipairs [...])]
-                 (if (in-scope? v#) `(.. ,str# " " ,v#)
-                     (or (list? v#) (sym? v#)) (.. str# " " (tostring v#))
-                     (= (type v#) :string) (.. str# " " (string.format "%q" v#))))
-         fd# (io.popen str#)
-         d# (fd#:read :*a)]
-     (fd#:close)
-     (string.sub d# 1 (- (length d#) 1))))
+ "simple macro to run shell commands inside fennel"
+ `(let [str# ,(accumulate [str# "" _ v# (ipairs [...])]
+               (if (in-scope? v#) `(.. ,str# " " ,v#)
+                   (or (list? v#) (sym? v#)) (.. str# " " (tostring v#))
+                   (= (type v#) :string) (.. str# " " (string.format "%q" v#))))
+        fd# (io.popen str#)
+        d# (fd#:read :*a)]
+   (fd#:close)
+   (string.sub d# 1 (- (length d#) 1))))
+
+(λ plugin! [repo ?spec]
+ "Build a lazy.nvim plugin spec, taking the repo as the first positional
+  argument instead of the numeric index 1.
+
+  Accepts the following arguments:
+  repo -> must be a symbol, a keyword or a string in \"owner/repo\" form.
+  spec -> a table with the remaining lazy.nvim fields. Optional.
+
+  Example of use:
+  ```fennel
+  (plugin! kevinhwang91/nvim-ufo {:event :BufReadPost})
+  (plugin! :folke/noice.nvim {:event :VeryLazy})
+  ```
+  That compiles to:
+  ```fennel
+  (doto {:event :BufReadPost} (tset 1 \"kevinhwang91/nvim-ufo\"))
+  ```"
+ (assert-compile (or (sym? repo) (str? repo)) "expected symbol, keyword or string for repo" repo)
+ (let [repo (->str repo)]
+  (assert-compile (and (repo:find "/" 1 true) (repo:match "^[^/%s]+/[^/%s]+$"))
+   (.. "expected \"owner/repo\", got \"" repo "\"") repo)
+  (assert-compile (or (nil? ?spec) (table? ?spec)) "expected table for spec" ?spec)
+  `(doto (or ,?spec {}) (tset 1 ,repo))))
 
 {: expr->str
  : extend-fn
@@ -599,7 +587,10 @@
  : autocmd!
  : augroup!
  : clear!
+ : plugin!
  : nil?
  : str?
  : bool?
+ : true?
+ : false?
  : num?}
