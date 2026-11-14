@@ -6,7 +6,7 @@
  :lazy false
  :build ":TSUpdate"
  :config #(let [ts (require :nvim-treesitter)]
-            (ts.install parsers)
-            (autocmd! FileType *
-                      (fn [{: buf}]
-                        (local (e e) (pcall vim.treesitter.start buf)))))}
+           (ts.install parsers)
+           (autocmd! FileType * `(do
+                                  (pcall vim.treesitter.start)
+                                  nil)))}

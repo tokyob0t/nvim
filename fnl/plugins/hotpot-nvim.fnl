@@ -1,1 +1,4 @@
-{1 :rktjmp/hotpot.nvim :opts {}}
+(import-macros {: plugin!} :macros)
+
+(plugin! rktjmp/hotpot.nvim
+ {:opts {}})

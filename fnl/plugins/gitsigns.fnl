@@ -1,5 +1,8 @@
+(import-macros {: plugin!} :macros)
+
 (local icons (require :icons))
 
-{1 :lewis6991/gitsigns.nvim
- :opts {; :signs icons.gutter
-        }}
+(plugin! lewis6991/gitsigns.nvim
+ {:opts {:signs_staged_enable false
+         :signs (collect [key value (pairs icons.gutter)]
+                 (values key {:text value}))}})
