@@ -28,7 +28,7 @@
                          :compiler
                          :bugreport
                          :ftplugin])]
-  (set (. vim.g (.. :loaded_ plugin)) 1))
+ (set (. vim.g (.. :loaded_ plugin)) 1))
 
 (require :modules.lazy)
 (require :modules.settings)

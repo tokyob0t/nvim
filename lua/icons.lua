@@ -11,7 +11,7 @@ return {
         source = '',
         regex = '',
         lua = '',
-        lazy = '󰒲 ',
+        lazy = '󰒲',
         help = '󰋖',
         input = '󰬴',
         -- arrow = '→',

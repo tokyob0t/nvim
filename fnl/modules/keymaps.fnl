@@ -10,7 +10,7 @@
 (map! [n] :<leader>q vim.cmd.q {:silent true :noremap true})
 (map! [n] :<leader>i :o {:silent true :noremap true})
 (map! [n] :<leader>I :O {:silent true :noremap true})
-(map! [n] "<leader><Tab>[" vim.cmd.bprev {:silent true :noremap true})
+(map! [n] "<leader><Tab>[" vim.cmd.bprevious {:silent true :noremap true})
 (map! [n] "<leader><Tab>]" vim.cmd.bnext {:silent true :noremap true})
 (map! [n] :<leader><Tab>d vim.cmd.bdelete {:silent true :noremap true})
 (map! [nv] ";" ":" {:silent true :noremap true})

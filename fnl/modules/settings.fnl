@@ -41,8 +41,4 @@
 (set! scrolloff 4)
 (set! fillchars {:diff "╱" :eob " " :horiz " " :msgsep "─" :vert " "})
 
-(set! listchars {:extends "»"
-                 :nbsp "␣"
-                 :precedes "«"
-                 :tab " ──"
-                 :trail "·"})
+(set! listchars {:extends "»" :nbsp "␣" :precedes "«" :tab " ──" :trail "·"})
