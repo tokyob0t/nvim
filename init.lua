@@ -49,4 +49,12 @@ vim.api.nvim_create_autocmd('BufWritePost', {
     end,
 })
 
+-- hotpot is lazy now, so :Hotpot only exists once it is loaded; this keeps a
+-- one-step way to refresh the cache after a git pull without editing a file
+vim.api.nvim_create_user_command('HotpotSync', function()
+    require('utils.installPlugin')('hotpot', 'rktjmp/hotpot.nvim', 'main')
+    local ctx = assert(require('hotpot.api').context(vim.fn.stdpath('config')))
+    ctx.sync()
+end, { desc = 'Recompile fnl/ into the hotpot cache' })
+
 require('modules')
