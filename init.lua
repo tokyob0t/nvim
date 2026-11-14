@@ -2,7 +2,7 @@ if vim.g.vscode then
     return
 end
 
-require('startup-profile').install()
+require('utils.startupProfile').install()
 
 local installPlugin = require('utils.installPlugin')
 
