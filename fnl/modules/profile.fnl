@@ -2,7 +2,7 @@
 ;; lua/startup-profile, surfaced on the alpha dashboard and :StartupTime.
 (import-macros {: autocmd! : command!} :macros)
 
-(local sp (require :startup-profile))
+(local sp (require :utils.startupProfile))
 
 (fn records [] (sp.records))
 
@@ -40,8 +40,7 @@
 
 (fn summary []
  (let [c (counts)]
-  (string.format "loaded %d of %d plugins across %d modules in %.1f ms" c.loaded c.total (length (modules))
-   (or (total) 0))))
+  (string.format "loaded %d of %d plugins in %.1f ms" c.loaded c.total (or (total) 0))))
 
 (fn loaded-ms [plugin]
  (let [loaded (and (. plugin :_) (. plugin :_ :loaded))]
