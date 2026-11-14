@@ -4,6 +4,7 @@
 
 (plugin! saghen/blink.cmp
  {:dependencies [:saghen/blink.lib :rafamadriz/friendly-snippets :nvim-tree/nvim-web-devicons :folke/snacks.nvim]
+  :event [:InsertEnter :CmdlineEnter]
   :init (fn []
          (set! completeopt [:menu :menuone :noselect]))
   :opts_extend [:sources.default]

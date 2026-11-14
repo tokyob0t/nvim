@@ -63,31 +63,40 @@
 
 ;; winbar components
 
+;; only ask for navic and devicons when there is something to show: reading
+;; package.loaded.vim.lsp avoids pulling vim.lsp in on the dashboard
+(fn lsp-clients? []
+ (let [lsp (. package.loaded :vim.lsp)]
+  (and lsp (> (length (lsp.get_clients {:bufnr 0})) 0))))
+
 (fn navic []
  (doto {:init (fn [self]
                (let [filename (vim.fn.expand "%:t")
-                     extension (vim.fn.fnamemodify self.filename ":e")
-                     devicons (require "nvim-web-devicons")
-                     (icon icon-color) (devicons.get_icon_color filename extension)]
-                (set [self.icon self.icon-color] [icon icon-color])
-                (set [self.filename self.extension] [filename extension])))
+                     extension (vim.fn.fnamemodify filename ":e")]
+                (set [self.filename self.extension] [filename extension])
+                (when (not= filename "")
+                 (let [devicons (require :nvim-web-devicons)
+                       (icon icon-color) (devicons.get_icon_color filename extension)]
+                  (set [self.icon self.icon-color] [icon icon-color])))))
         :hl "Normal"}
   (tset 1 {:hl (fn [{: icon-color}] {:fg icon-color})
            :provider (fn [{: icon}]
                       (if icon (.. icon " ")))})
   (tset 2 {:hl "Normal"
            :provider (fn [{: filename}]
-                      (.. filename " "))})
+                      (if (not= filename "") (.. filename " ")))})
   (tset 3 {:hl "NavicSeparator"
            :update "CursorMoved"
            :provider (.. icons.common.chevron_right " ")
-           :condition #(let [navic (require :nvim-navic)
-                             available? (navic.is_available)]
-                        (and available? (> (length (navic.get_location)) 0)))})
+           :condition #(let [navic (and (lsp-clients?) (require :nvim-navic))]
+                        (if navic
+                            (and (navic.is_available) (> (length (navic.get_location)) 0))
+                            false))})
   (tset 4 {:update "CursorMoved"
-           :provider #(let [navic (require :nvim-navic)] (navic.get_location {:highlight true}))
-           :condition #(let [navic (require :nvim-navic)]
-                        (navic.is_available))})))
+           :provider #(let [navic (and (lsp-clients?) (require :nvim-navic))]
+                       (if navic (or (navic.get_location {:highlight true}) "") ""))
+           :condition #(let [navic (and (lsp-clients?) (require :nvim-navic))]
+                        (if navic (navic.is_available) false))})))
 
 ;; statusline components
 

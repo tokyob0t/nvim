@@ -1,12 +1,14 @@
-(import-macros {: autocmd!} :macros)
+(import-macros {: autocmd! : plugin!} :macros)
 
-(local parsers (require :parsers))
-
-{1 :nvim-treesitter/nvim-treesitter
- :lazy false
- :build ":TSUpdate"
- :config #(let [ts (require :nvim-treesitter)]
-           (ts.install parsers)
-           (autocmd! FileType * `(do
-                                  (pcall vim.treesitter.start)
-                                  nil)))}
+(plugin! nvim-treesitter/nvim-treesitter
+ {:event [:BufReadPre :BufNewFile]
+  :cmd [:TSInstall :TSInstallFromGrammar :TSUpdate :TSUninstall :TSLog]
+  :build ":TSUpdate"
+  :init (fn []
+         (autocmd! FileType * `(do
+                                (pcall vim.treesitter.start)
+                                nil)))
+  :config (fn []
+           (let [ts (require :nvim-treesitter)
+                 parsers (require :parsers)]
+            (ts.install parsers)))})

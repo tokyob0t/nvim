@@ -3,7 +3,7 @@
 (local icons (require :icons))
 
 (plugin! SmiteshP/nvim-navic
- {:lazy false
+ {:event :LspAttach
   :opts {:highlight true
          :icons icons.kinds
          :lsp {:auto_attach true}

@@ -5,16 +5,18 @@
 (plugin! dmtrKovalenko/fff
  {:build #(let [download (require :fff.download)]
            (download:download_or_build_binary))
-  :dependencies ["folke/snacks.nvim"]
-  :init #(let [fff (require :fff)]
-          (command! FFFindFiles `(fff.find_files {:title "Find Files"}))
-          (command! FFFuzzySearch `(fff.live_grep {:title "Live Grep"}))
-          (command! FFFindOldFiles (fn []) {:desc "Find Old Files"})
-          ;; ToDo
-          (custom-set-face! :FFFNormalTransparent [] {:bg :NONE})
-          (custom-set-face! :FFFRed [] {:fg :red :bg :NONE}))
+  :dependencies [:folke/snacks.nvim :nvim-treesitter/nvim-treesitter]
+  :cmd [:FFFindFiles :FFFuzzySearch :FFFindOldFiles]
+  :config (fn [_ opts]
+           (let [fff (require :fff)]
+            (fff.setup opts)
+            (command! FFFindFiles `(fff.find_files {:title "Find Files"}))
+            (command! FFFuzzySearch `(fff.live_grep {:title "Live Grep"}))
+            (command! FFFindOldFiles (fn []) {:desc "Find Old Files"})
+            ;; ToDo
+            (custom-set-face! :FFFNormalTransparent [] {:bg :NONE})
+            (custom-set-face! :FFFRed [] {:fg :red :bg :NONE})))
   :keys [[:<leader>. :<cmd>FFFindFiles<CR>] ["<leader>," :<cmd>FFFuzzySearch<CR>]]
-  :lazy false
   :opts {:title "Find Files"
          :file_picker {:fuzzy_query_highlighting true}
          :layout {:anchor :center

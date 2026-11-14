@@ -30,9 +30,11 @@
                          :ftplugin])]
  (set (. vim.g (.. :loaded_ plugin)) 1))
 
-(local profile (require :modules.profile))
+;; loads the profiler early so its VimEnter/UIEnter hooks are registered
+;; before the dashboard asks for the numbers
+(require :modules.profile)
 
-(profile.time! :lazy #(require :modules.lazy))
-(profile.time! :settings #(require :modules.settings))
-(profile.time! :keymaps #(require :modules.keymaps))
-(profile.time! :editor #(require :modules.editor))
+(require :modules.lazy)
+(require :modules.settings)
+(require :modules.keymaps)
+(require :modules.editor)

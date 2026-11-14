@@ -4,7 +4,9 @@
 (local servers (require :servers))
 
 (plugin! williamboman/mason-lspconfig.nvim
- {:opts {:automatic_enable false :ensure_installed (vim.tbl_keys servers)}
+ {:event :LspAttach
+  :cmd [:Mason :MasonInstall :MasonUninstall :MasonUpdate :MasonLog :MasonInstallAll]
+  :opts {:automatic_enable false :ensure_installed (vim.tbl_keys servers)}
   :dependencies [{1 :rahuliyer95/mason.nvim
                   :branch "feat/1888/pnpm-installer"
                   :opts {:max_concurrent_installers 5

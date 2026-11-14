@@ -1,11 +1,15 @@
-(import-macros {: plugin!} :macros)
+(import-macros {: plugin! : autocmd!} :macros)
 
 (local icons (require :icons))
 
 (plugin! nvim-tree/nvim-tree.lua
- {:lazy false
-  :dependencies [:nvim-tree/nvim-web-devicons]
+ {:dependencies [:nvim-tree/nvim-web-devicons]
+  :cmd [:NvimTreeToggle :NvimTreeOpen :NvimTreeFocus :NvimTreeFindFile :NvimTreeCollapse]
   :keys [[:<leader>e :<cmd>NvimTreeToggle<CR>]]
+  :init (fn []
+         (autocmd! BufEnter * #(when (= :dir (vim.fn.getftype (vim.api.nvim_buf_get_name 0)))
+                                (vim.cmd.NvimTreeOpen)
+                                nil)))
   :opts {:actions {:open_file {:resize_window true}}
          :disable_netrw true
          :git {:enable true}
