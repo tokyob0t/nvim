@@ -1,11 +1,11 @@
 ;; Startup profiling: wall-clock cost of each config module plus the total,
 ;; surfaced on the alpha dashboard and through :StartupTime.
-(local uv (or vim.uv vim.loop))
+(import-macros {: autocmd! : command!} :macros)
 
 (local times [])
 (local by-name {})
 
-(fn now [] (/ (uv.hrtime) 1e6))
+(fn now [] (/ (vim.uv.hrtime) 1e6))
 
 (fn time! [name f]
  (let [start (now)
@@ -16,14 +16,14 @@
   (if ok? res (error res))))
 
 (fn elapsed []
- (let [t0 (. vim.g :startup_t0)]
+ (let [t0 vim.g.startup-t0]
   (if t0 (- (now) (/ t0 1e6)))))
 
 ;; freeze the total at VimEnter so :StartupTime keeps reporting startup and
 ;; not however long the session has been open
 (var total-ms nil)
 
-(vim.api.nvim_create_autocmd :VimEnter {:callback (fn [] (set total-ms (elapsed)))})
+(autocmd! VimEnter * `(set total-ms (elapsed)))
 
 (fn total [] (or total-ms (elapsed)))
 
@@ -42,11 +42,9 @@
 
 (fn slow-plugins [n]
  (let [(ok? config) (pcall require :lazy.core.config)
-       items (if ok?
-                 (icollect [name plugin (pairs config.plugins)]
-                  (let [ms (loaded-ms plugin)]
-                   (if ms {:name name :ms ms})))
-                 [])]
+       items (if (not ok?) [] (icollect [name plugin (pairs config.plugins)]
+                               (let [ms (loaded-ms plugin)]
+                                (if ms {:name name :ms ms}))))]
   (table.sort items (fn [a b] (> a.ms b.ms)))
   (icollect [i item (ipairs items)] (if (<= i n) item))))
 
@@ -81,6 +79,6 @@
    (each [_ key (ipairs [:q :<Esc>])]
     (vim.keymap.set :n key #(vim.api.nvim_win_close win true) {:buffer buf})))))
 
-(vim.api.nvim_create_user_command :StartupTime show {:desc "Show the startup time breakdown"})
+(command! StartupTime `(show) {:desc "Show the startup time breakdown"})
 
 {: time! : total : summary : show : times : by-name}

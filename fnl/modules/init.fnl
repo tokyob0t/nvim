@@ -1,6 +1,7 @@
 (import-macros {: let!} :macros)
 
 (let! mapleader " ")
+(let! startup-t0 (vim.uv.hrtime))
 
 (each [_ plugin (ipairs [:2html_plugin
                          :getscript
@@ -30,9 +31,9 @@
                          :ftplugin])]
  (set (. vim.g (.. :loaded_ plugin)) 1))
 
-(local profile (require :modules.profile))
+(local {: time!} (require :modules.profile))
 
-(profile.time! :lazy #(require :modules.lazy))
-(profile.time! :settings #(require :modules.settings))
-(profile.time! :keymaps #(require :modules.keymaps))
-(profile.time! :editor #(require :modules.editor))
+(time! :lazy #(require :modules.lazy))
+(time! :settings #(require :modules.settings))
+(time! :keymaps #(require :modules.keymaps))
+(time! :editor #(require :modules.editor))
