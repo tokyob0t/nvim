@@ -6,8 +6,10 @@
 
 (local cfg (vim.fn.stdpath :config))
 
-(local api (require :hotpot.api))
-(local ctx (assert (api.context cfg)))
+;; set by init.lua when it boots from the hotpot cache; the fallback matches
+;; where hotpot writes compiled output for a config-root context
+(local destination (or (. vim.g :hotpot_cache_dir)
+                    (.. (vim.fn.stdpath :data) :/site/pack/hotpot/opt/hotpot-config-cache)))
 
 (fn list-fennel-files [path]
  (let [path (.. path :/*.fnl)
@@ -29,7 +31,7 @@
 (lazy.setup {:change_detection {:enabled false}
              :checker {:enabled true :notify false}
              :spec (list-fennel-plugins)
-             :performance {:rtp {:paths [(ctx.locate :destination)]} :reset_packpath false}
+             :performance {:rtp {:paths [destination]} :reset_packpath false}
              :ui {:title :lazy.nvim
                   :title_pos :center
                   :border :solid
