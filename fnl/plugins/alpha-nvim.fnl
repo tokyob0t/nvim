@@ -52,8 +52,7 @@
 (local header-padding (get-padding total-height))
 
 (plugin! goolord/alpha-nvim
- {:dependencies [:dmtrKovalenko/fff]
-  :event :VimEnter
+ {:event :VimEnter
   :config (fn []
            (let [profile (require :modules.profile)]
             ((. (require :alpha) :setup) {:opts {:margin 5}
