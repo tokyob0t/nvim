@@ -1,31 +1,37 @@
-;; Startup profiling: wall-clock cost of each config module plus the total,
-;; surfaced on the alpha dashboard and through :StartupTime.
+;; Startup profiling: per-require wall-clock times gathered by
+;; lua/startup-profile, surfaced on the alpha dashboard and :StartupTime.
 (import-macros {: autocmd! : command!} :macros)
 
-(local times [])
-(local by-name {})
+(local sp (require :startup-profile))
 
-(fn now [] (/ (vim.uv.hrtime) 1e6))
+(fn records [] (sp.records))
 
-(fn time! [name f]
- (let [start (now)
-       (ok? res) (pcall f)
-       elapsed (- (now) start)]
-  (tset by-name name elapsed)
-  (table.insert times {:name name :ms elapsed})
-  (if ok? res (error res))))
+;; config modules: the direct children of modules.* (lazy, settings, ...)
+(fn modules []
+ (icollect [_ {: name : ms} (ipairs (records))]
+  (let [module (and (not= name :modules.profile) (name:match "^modules%.([^%.]+)$"))]
+   (if module {:name module :ms ms}))))
 
-(fn elapsed []
- (let [t0 vim.g.startup-t0]
-  (if t0 (- (now) (/ t0 1e6)))))
+;; requires grouped by name and sorted by self time, so parents do not hide
+;; their children and repeated requires do not show up twice
+(fn requires [n]
+ (let [by-name {}]
+  (each [_ {: name : self_ms} (ipairs (records))]
+   (when (>= self_ms 0.05)
+    (tset by-name name (+ self_ms (or (. by-name name) 0)))))
+  (let [items (icollect [name ms (pairs by-name)] {:name name :ms ms})]
+   (table.sort items (fn [a b] (> a.ms b.ms)))
+   (icollect [i item (ipairs items)] (if (<= i n) item)))))
 
 ;; freeze the total at VimEnter so :StartupTime keeps reporting startup and
-;; not however long the session has been open
+;; not however long the session has been open; stop timing once the UI is up
+;; so plugin loads during the session are not recorded
 (var total-ms nil)
 
-(autocmd! VimEnter * `(set total-ms (elapsed)))
+(autocmd! VimEnter * `(set total-ms (sp.elapsed_ms)) {:desc "freeze the startup total"})
+(autocmd! UIEnter * `(sp.uninstall) {:desc "stop timing requires"})
 
-(fn total [] (or total-ms (elapsed)))
+(fn total [] (or total-ms (sp.elapsed_ms)))
 
 (fn counts []
  (let [(ok? lazy) (pcall require :lazy)
@@ -34,7 +40,8 @@
 
 (fn summary []
  (let [c (counts)]
-  (string.format "loaded %d of %d plugins across %d modules in %.1f ms" c.loaded c.total (length times) (or (total) 0))))
+  (string.format "loaded %d of %d plugins across %d modules in %.1f ms" c.loaded c.total (length (modules))
+   (or (total) 0))))
 
 (fn loaded-ms [plugin]
  (let [loaded (and (. plugin :_) (. plugin :_ :loaded))]
@@ -54,8 +61,12 @@
   (table.insert lines (string.format "total      %7.1f ms" total))
   (table.insert lines "")
   (table.insert lines :modules)
-  (each [_ {: name : ms} (ipairs times)]
-   (table.insert lines (string.format "  %-12s %7.2f ms" name ms)))
+  (each [_ {: name : ms} (ipairs (modules))]
+   (table.insert lines (string.format "  %-14s %7.2f ms" name ms)))
+  (table.insert lines "")
+  (table.insert lines :requires)
+  (each [_ {: name : ms} (ipairs (requires 12))]
+   (table.insert lines (string.format "  %-26s %7.2f ms" name ms)))
   (table.insert lines "")
   (table.insert lines :plugins)
   (each [_ {: name : ms} (ipairs (slow-plugins 8))]
@@ -81,4 +92,4 @@
 
 (command! StartupTime `(show) {:desc "Show the startup time breakdown"})
 
-{: time! : total : summary : show : times : by-name}
+{: total : summary : show : records : modules : requires}

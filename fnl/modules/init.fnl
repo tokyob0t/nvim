@@ -1,7 +1,6 @@
 (import-macros {: let!} :macros)
 
 (let! mapleader " ")
-(let! startup-t0 (vim.uv.hrtime))
 
 (each [_ plugin (ipairs [:2html_plugin
                          :getscript
@@ -31,9 +30,11 @@
                          :ftplugin])]
  (set (. vim.g (.. :loaded_ plugin)) 1))
 
-(local {: time!} (require :modules.profile))
+;; loads the profiler early so its VimEnter/UIEnter hooks are registered
+;; before the dashboard asks for the numbers
+(require :modules.profile)
 
-(time! :lazy #(require :modules.lazy))
-(time! :settings #(require :modules.settings))
-(time! :keymaps #(require :modules.keymaps))
-(time! :editor #(require :modules.editor))
+(require :modules.lazy)
+(require :modules.settings)
+(require :modules.keymaps)
+(require :modules.editor)
