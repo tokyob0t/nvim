@@ -5,7 +5,7 @@
 (plugin! dmtrKovalenko/fff
  {:build #(let [download (require :fff.download)]
            (download:download_or_build_binary))
-  :dependencies [:folke/snacks.nvim]
+  :dependencies [:folke/snacks.nvim :nvim-treesitter/nvim-treesitter]
   :cmd [:FFFindFiles :FFFuzzySearch :FFFindOldFiles]
   :config (fn [_ opts]
            (let [fff (require :fff)]
