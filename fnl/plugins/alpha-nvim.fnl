@@ -48,11 +48,20 @@
 (local button-count (length default.buttons.val))
 (local button-spacing (or default.buttons.opts.spacing 0))
 (local buttons-height (+ button-count (* (- button-count 1) button-spacing)))
-(local total-height (+ header-height 2 buttons-height))
+(local total-height (+ header-height 2 buttons-height 2))
 (local header-padding (get-padding total-height))
 
 (plugin! goolord/alpha-nvim
  {:dependencies [:dmtrKovalenko/fff]
   :event :VimEnter
-  :opts {:opts {:margin 5}
-         :layout [{:type :padding :val header-padding} default.header {:type :padding :val 2} default.buttons]}})
+  :config (fn []
+           (let [profile (require :modules.profile)]
+            ((. (require :alpha) :setup) {:opts {:margin 5}
+                                          :layout [{:type :padding :val header-padding}
+                                                   default.header
+                                                   {:type :padding :val 2}
+                                                   default.buttons
+                                                   {:type :padding :val 1}
+                                                   {:type :text
+                                                    :opts {:hl :Comment :position :center}
+                                                    :val (profile.summary)}]})))})
