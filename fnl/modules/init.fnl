@@ -30,7 +30,9 @@
                          :ftplugin])]
  (set (. vim.g (.. :loaded_ plugin)) 1))
 
-(require :modules.lazy)
-(require :modules.settings)
-(require :modules.keymaps)
-(require :modules.editor)
+(local profile (require :modules.profile))
+
+(profile.time! :lazy #(require :modules.lazy))
+(profile.time! :settings #(require :modules.settings))
+(profile.time! :keymaps #(require :modules.keymaps))
+(profile.time! :editor #(require :modules.editor))
