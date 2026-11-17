@@ -14,3 +14,6 @@
 (map! [n] "<leader><Tab>]" vim.cmd.bnext {:silent true :noremap true})
 (map! [n] :<leader><Tab>d vim.cmd.bdelete {:silent true :noremap true})
 (map! [nv] ";" ":" {:silent true :noremap true})
+;; the dashboard buttons used to create these through alpha's :keymap
+(map! [n] :<leader>l vim.cmd.Lazy {:silent true :noremap true})
+(map! [n] :<leader>m vim.cmd.Mason {:silent true :noremap true})
