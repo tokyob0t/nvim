@@ -4,13 +4,13 @@
 
 (local sp (require :utils.startupProfile))
 
-(fn records [] (sp.records))
+(local records #(sp.records))
 
 ;; config modules: the direct children of modules.* (lazy, settings, ...)
 (fn modules []
  (icollect [_ {: name : ms} (ipairs (records))]
   (let [module (and (not= name :modules.profile) (name:match "^modules%.([^%.]+)$"))]
-   (if module {:name module :ms ms}))))
+   (if module {:name module : ms}))))
 
 ;; requires grouped by name and sorted by self time, so parents do not hide
 ;; their children and repeated requires do not show up twice
@@ -19,7 +19,7 @@
   (each [_ {: name : self_ms} (ipairs (records))]
    (when (>= self_ms 0.05)
     (tset by-name name (+ self_ms (or (. by-name name) 0)))))
-  (let [items (icollect [name ms (pairs by-name)] {:name name :ms ms})]
+  (let [items (icollect [name ms (pairs by-name)] {: name : ms})]
    (table.sort items (fn [a b] (> a.ms b.ms)))
    (icollect [i item (ipairs items)] (if (<= i n) item)))))
 
@@ -50,7 +50,7 @@
  (let [(ok? config) (pcall require :lazy.core.config)
        items (if (not ok?) [] (icollect [name plugin (pairs config.plugins)]
                                (let [ms (loaded-ms plugin)]
-                                (if ms {:name name :ms ms}))))]
+                                (if ms {: name : ms}))))]
   (table.sort items (fn [a b] (> a.ms b.ms)))
   (icollect [i item (ipairs items)] (if (<= i n) item))))
 
@@ -74,16 +74,16 @@
         height (length lines)
         buf (vim.api.nvim_create_buf false true)]
    (vim.api.nvim_buf_set_lines buf 0 -1 false lines)
-   (vim.api.nvim_set_option_value :modifiable false {:buf buf})
-   (vim.api.nvim_set_option_value :bufhidden :wipe {:buf buf})
+   (vim.api.nvim_set_option_value :modifiable false {: buf})
+   (vim.api.nvim_set_option_value :bufhidden :wipe {: buf})
    (local win (vim.api.nvim_open_win buf true
                {:relative :editor
                 :style :minimal
                 :border :rounded
                 :title " startup "
                 :title_pos :center
-                :width width
-                :height height
+                : width
+                : height
                 :row (math.max 1 (- (math.floor (/ (- vim.o.lines height) 2)) 2))
                 :col (math.max 1 (math.floor (/ (- vim.o.columns width) 2)))}))
    (each [_ key (ipairs [:q :<Esc>])]
