@@ -484,6 +484,26 @@ differently:
 Fennel has no keyword type; strings act as keywords, hence the colon form in key
 position.
 
+**FORM-10a (NOTE).** The colon is not glued to the name: `:word` and `: word`
+read as the same string. So `{:header header}` and `{: header}` compile to the
+same table, and `fennelfmt` normalizes the first into the second whenever a
+keyword key is paired with a symbol of the same name. That output is valid, not
+a formatter bug:
+
+```fennel
+{:foo foo :bar 2}   ; fennelfmt prints   {: foo :bar 2}
+                     ; both compile to    {foo = foo, bar = 2}
+```
+
+Verified with the vendored compiler:
+
+```lua
+require('hotpot.vendor.fennel').compileString('{:foo foo :bar 2}')
+-- => "return {foo = foo, bar = 2}"
+require('hotpot.vendor.fennel').compileString('{: foo :bar 2}')
+-- => "return {foo = foo, bar = 2}"
+```
+
 **FORM-12 (MUST).** Do not use `require-macros` or `eval-compiler`.
 
 **FORM-13 (MUST).** The `lua` special form exists to port imperative code
