@@ -15,9 +15,10 @@
 1. **Precedence.** Correctness > this guide > local file conventions. The guide
    itself says its advice is "a starting point rather than a set of universal
    rules"; use judgement and context.
-2. **Tie-breaker.** If you are unsure how to format something, format it the way
-   [`fnlfmt`](https://git.sr.ht/~technomancy/fnlfmt) would. When `fnlfmt` and
-   this document disagree, `fnlfmt` wins.
+2. **Tie-breaker.** If you are unsure how to format something, run
+   `fennelfmt --check` (configuration in `.fennelfmt.fnl`). When the formatter
+   and this document disagree, the formatter wins; §14 lists every place where
+   this repository deviates from the upstream layout.
 3. **Verify.** After writing Fennel, always check it compiles:
    `fennel --compile file.fnl > /dev/null`. Never emit code you have not
    compiled. Two caveats: (a) blocks in this document marked `;; Don't:` are
@@ -47,9 +48,9 @@ Rule IDs are stable: `PAREN-2`, `IND-3`, etc. Cite them when explaining changes.
 | 3 | No space after `(` / `[` / `{`, none before `)` / `]` / `}` | PAREN-2 |
 | 4 | Any text adjacent to a delimiter is separated by exactly one space | PAREN-2 |
 | 5 | No line consists only of closing delimiters | PAREN-3 |
-| 6 | Body-taking forms are indented 2 spaces, never aligned under the condition | IND-2 |
-| 7 | Non-body forms align their arguments (same column as first argument) | IND-3 |
-| 8 | Lines ≤ 80 columns | LEN-1 |
+| 6 | Body-taking forms are indented 1 space, never aligned under the condition | IND-2 |
+| 7 | Call arguments are not aligned; continuation lines step one space in | IND-3 |
+| 8 | Lines ≤ 120 columns | LEN-1 |
 | 9 | One blank line between top-level forms; adjacent top-level `local`s may be grouped | BLANK-1 |
 | 10 | No blank lines inside a function, except before a nested `fn`, or to separate `if`/`match` branches | BLANK-2 |
 | 11 | Identifiers are lowercase, hyphen-separated; no CamelCase | NAME-1 |
@@ -151,12 +152,17 @@ Do not invoke these unless you know what you are doing. They do **not** make the
 
 ## 3. Indentation and alignment
 
+**Repository override.** This config indents bodies with **one** space and does
+not align call arguments (`:indent 1`, `:align-calls? false` in `.fennelfmt.fnl`).
+The rules below keep the upstream rationale, but the examples show the layout
+this repository actually uses.
+
 **IND-1 (MUST).** The callee (first element after the opening paren) decides how
 the remaining forms are indented. Two regimes exist: *body* forms and
 *non-body* forms.
 
 **IND-2 (MUST).** If the callee is a special form or macro that accepts a body,
-indent the body **two spaces** from the opening paren. Never align a body under
+indent the body **one space** from the opening paren. Never align a body under
 the condition. Body-taking forms in Fennel include `fn`, `lambda`, `when`,
 `unless`, `do`, `each`, `for`, `while`, `match`, `case`, `let`-style forms with
 bodies inside bindings, `with-open`, `fcollect`, `icollect`, `collect`, `doto`,
@@ -170,40 +176,32 @@ bodies inside bindings, `with-open`, `fcollect`, `icollect`, `collect`, `doto`,
 
 ;; Do:
 (when condition
-  (print "Running the thing!")
-  (run :the-thing))
+ (print "Running the thing!")
+ (run :the-thing))
 
 (with-connection [s "https://fennel-lang.org"]
-  (parse (read-body s)))
+ (parse (read-body s)))
 ```
 
 **IND-2a (SHOULD).** To determine whether a given form takes a body, consult the
 Fennel reference or call `(fennel.syntax)` — it returns a table of form names,
 some with `:body? true`. For your own macros, prefix the name with `with-` or
-`def` so third-party tools (editors, `fnlfmt`) recognize it as body-taking.
+`def` so third-party tools (editors, `fennelfmt`) recognize it as body-taking.
 
-**IND-3 (MUST).** Otherwise, alignment follows the first argument:
-
-- If the first argument is on the **same line** as the callee → align every
-  following argument's starting column with the first argument's.
-- If the first argument is on the **following line** → align it with the callee's
-  column, and align the rest the same way.
+**IND-3 (MUST).** Upstream aligns each argument under the first one; this
+repository disables that. Every continuation line steps **one space** past the
+opening paren, regardless of where the first argument sits.
 
 ```fennel
-;; Don't:
-(+ (sqrt -1)
-  (* x y)
-  (+ p q))
-
-(+
-   (sqrt -1)
-   (* x y)
-   (+ p q))
-
-;; Do:
+;; Don't: upstream alignment, not used here
 (+ (sqrt -1)
    (* x y)
    (+ p q))
+
+;; Do: what fennelfmt produces here
+(+ (sqrt -1)
+ (* x y)
+ (+ p q))
 
 (+
  (sqrt -1)
@@ -219,10 +217,10 @@ expression).
 
 ## 4. Line length
 
-**LEN-1 (SHOULD).** Keep lines ≤ **80 columns**. Rationale from the guide:
-readability drops on long lines; wide screens are better spent on viewing several
-code fragments side by side; and narrow lines respect readers with poor eyesight
-who must use large fonts. Break the expression rather than the rule.
+**LEN-1 (SHOULD).** Keep lines ≤ **120 columns** (`:line-length 120` in
+`.fennelfmt.fnl`; Lua uses 100 through `stylua.toml`). Upstream suggests 80:
+readability drops on long lines, and narrow lines respect readers who must use
+large fonts. Break the expression rather than the rule.
 
 ---
 
@@ -625,9 +623,9 @@ like `let` or `with-open`.
 | Tabs / trailing spaces / CRLF | Spaces, LF, trimmed lines | PAREN-1 |
 | `(foo ( bar ) quux)` | `(foo (bar) quux)` | PAREN-2 |
 | `))))` stacked on separate lines | Close on the last content line | PAREN-3 |
-| `(when cond\n      body)` | Body indented 2 spaces | IND-2 |
-| Ragged multi-arg alignment | Align under first argument | IND-3 |
-| 120-column lines | Wrap at ≤ 80 | LEN-1 |
+| `(when cond\n      body)` | Body indented 1 space | IND-2 |
+| Arguments aligned under the first one | One space in, no alignment | IND-3 |
+| 140-column lines | Wrap at ≤ 120 | LEN-1 |
 | Blank lines scattered in a body | Remove (keep only the two exceptions) | BLANK-2 |
 | `XMLHttpRequest`, `append_map` (internal) | `xml-http-request`, `append-map` | NAME-1/2 |
 | `is-empty` | `empty?` | NAME-4 |
@@ -657,10 +655,16 @@ like `let` or `with-open`.
 These refine the guide for `/Users/tokyob0t/.config/nvim` (Neovim config,
 `fnl/` → Fennel compiled on load, `flsproject.fnl`, `stylua.toml` for Lua only).
 
-- **Width.** `stylua.toml` sets `column_width = 100` for *Lua*. Fennel keeps the
-  upstream default: **80 columns** (LEN-1). Do not import the 100 into `.fnl`.
-- **Indent.** 4 spaces in `stylua.toml` apply to Lua; Fennel uses **2 spaces**
-  (IND-2). Both forbid tabs.
+- **Width.** `.fennelfmt.fnl` sets `:line-length 120` for Fennel; `stylua.toml`
+  sets `column_width = 100` for Lua. Do not mix them.
+- **Indent.** Fennel uses **1 space** (`:indent 1`); Lua uses 4
+  (`indent_width = 4`). Both forbid tabs.
+- **Alignment.** `:align-calls? false`: call arguments are never aligned under
+  the first one, and multi-line tables put each key on its own line.
+- **Formatter.** `fennelfmt` is the gate: `fennelfmt --check fnl/**/*.fnl` before
+  committing, `--fix` to apply. `.fennelfmt.fnl` also declares
+  `:extra-forms {:plugin! :body}` so `(plugin! repo {...})` indents its spec as a
+  body. `plugin!` is a macro of this repo (see §12), not upstream Fennel.
 - **Quotes.** `quote_style = "AutoPreferSingle"` is Lua-only; Fennel strings use
   double quotes for content and `:colons` for opaque keys (FORM-10).
 - **Globals.** `flsproject.fnl` allows `vim` as a global. Do not add others; use
@@ -668,9 +672,12 @@ These refine the guide for `/Users/tokyob0t/.config/nvim` (Neovim config,
 - **Modules.** One component per file under `fnl/plugins/**`; each returns a
   table-shaped component (MOD-6), with `require` at top (MOD-1) and the return
   value at the bottom (MOD-3).
-- **Formatting escape hatch.** If a construct cannot be made to satisfy IND-3
-  without exceeding 80 columns, prefer restructuring over violating alignment;
-  as a last resort, match `fnlfmt`'s output exactly.
+- **Examples.** Code blocks outside §3 keep upstream's two-space layout because
+  they illustrate rules (blank lines, naming, idioms), not exact spacing. When
+  generating code, `fennelfmt` decides.
+- **Formatting escape hatch.** If a construct cannot fit 120 columns without
+  becoming unreadable, prefer restructuring over fighting the formatter; as a
+  last resort, match `fennelfmt`'s output exactly.
 
 ---
 
@@ -683,7 +690,7 @@ These refine the guide for `/Users/tokyob0t/.config/nvim` (Neovim config,
 - Project layout beyond `src/`, `test/`, `bin/`.
 
 When in doubt: write the tree so its indentation alone explains it, keep it under
-80 columns, compile it, and let `fnlfmt` be the tie-breaker.
+120 columns, compile it, and let `fennelfmt` be the tie-breaker.
 
 ---
 
