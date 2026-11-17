@@ -7,7 +7,9 @@
  (install-plugin :hotpot :rktjmp/hotpot.nvim :main)
  (let [api (require :hotpot.api)
        ctx (assert (api.context (vim.fn.stdpath :config)))]
-  (ctx.sync)))
+  (ctx.sync)
+  ;; keep the bundled specs in step with what hotpot just compiled
+  ((. (require :utils.specsBundle) :build))))
 
 (fn sync-on-save! []
  (when (not package.loaded.hotpot)

@@ -18,7 +18,7 @@
    (if (not= file "")
        (vim.fn.fnamemodify file ":t:r")))))
 
-(fn list-fennel-plugins []
+(fn require-fennel-plugins []
  (let [LogLevels vim.log.levels
        directory (.. cfg :/fnl/plugins)
        files (list-fennel-files directory)
@@ -27,6 +27,10 @@
    (let [mod (.. :plugins. file)
          (ok p) (pcall require mod)]
     (if ok p (display-error file p))))))
+
+;; utils.specsBundle concatenates the compiled specs into one file
+(fn list-fennel-plugins []
+ (or ((. (require :utils.specsBundle) :load)) (require-fennel-plugins)))
 
 (lazy.setup {:change_detection {:enabled false}
              :checker {:enabled true :notify false}
