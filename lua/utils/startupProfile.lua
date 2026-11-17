@@ -72,6 +72,20 @@ function M.records()
     return records
 end
 
+--- Distinct config modules that this session loaded from the hotpot cache:
+--- the compiled Lua behind `modules.*` and `plugins.*`.
+function M.cached()
+    local seen, out = {}, {}
+    for _, record in ipairs(records) do
+        local name = record.name
+        if (name:sub(1, 8) == 'modules.' or name:sub(1, 8) == 'plugins.') and not seen[name] then
+            seen[name] = true
+            out[#out + 1] = name
+        end
+    end
+    return out
+end
+
 --- Milliseconds since the hook was installed (or since vim.g.startup_t0).
 function M.start_ms()
     if start_ns then

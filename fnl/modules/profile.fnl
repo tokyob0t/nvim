@@ -38,9 +38,11 @@
        (ok? stats) (if ok? (pcall (fn [] (lazy.stats))) false)]
   {:total (if ok? stats.count 0) :loaded (if ok? stats.loaded 0)}))
 
+(fn cached-count [] (length (sp.cached)))
+
 (fn summary []
  (let [c (counts)]
-  (string.format "loaded %d of %d plugins in %.1f ms" c.loaded c.total (or (total) 0))))
+  (string.format "loaded %d of %d plugins in %.1f ms (%d cached)" c.loaded c.total (or (total) 0) (cached-count))))
 
 (fn loaded-ms [plugin]
  (let [loaded (and (. plugin :_) (. plugin :_ :loaded))]
@@ -58,6 +60,7 @@
  (let [lines []
        total (or (total) 0)]
   (table.insert lines (string.format "total      %7.1f ms" total))
+  (table.insert lines (string.format "cached     %7d modules" (cached-count)))
   (table.insert lines "")
   (table.insert lines :modules)
   (each [_ {: name : ms} (ipairs (modules))]
