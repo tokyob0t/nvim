@@ -4,7 +4,6 @@
 -- trustworthy while they are at least as new as the sources.
 local M = {}
 
-local uv = vim.uv or vim.loop
 
 function M.dir()
     return vim.fs.joinpath(vim.fn.stdpath('data'), 'site', 'pack', 'hotpot', 'opt', 'hotpot-config-cache')
@@ -23,14 +22,14 @@ function M.fresh(dir, config)
     local root = vim.fs.joinpath(config, 'fnl')
     local compiled_root = vim.fs.joinpath(dir, 'lua')
 
-    if not uv.fs_stat(root) or not uv.fs_stat(compiled_root) then
+    if not vim.uv.fs_stat(root) or not vim.uv.fs_stat(compiled_root) then
         return false
     end
 
     for path, kind in vim.fs.dir(root, { depth = 10 }) do
         if kind == 'file' and path:sub(-4) == '.fnl' then
-            local source = uv.fs_stat(vim.fs.joinpath(root, path))
-            local compiled = uv.fs_stat(vim.fs.joinpath(compiled_root, (path:gsub('%.fnl$', '.lua'))))
+            local source = vim.uv.fs_stat(vim.fs.joinpath(root, path))
+            local compiled = vim.uv.fs_stat(vim.fs.joinpath(compiled_root, (path:gsub('%.fnl$', '.lua'))))
             if not compiled or (source and newer(source, compiled)) then
                 return false
             end

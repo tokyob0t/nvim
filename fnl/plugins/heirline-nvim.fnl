@@ -47,7 +47,7 @@
    :static {:bufferline {:init (fn [{: bufnr &as self}]
                                 (set self.filename (pathshorten (fnamemodify (bufname bufnr) ":.")))
                                 (when (= self.filename "")
-                                 (set self.lfilename "No Name")))
+                                 (set self.filename "No Name")))
                          :hl (fn [{: is_active}]
                               (if is_active :TabLineSel :TabLine))
                          1 {:provider #(.. " [" $.filename "] ")
