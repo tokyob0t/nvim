@@ -13,6 +13,7 @@
          :formatters_by_ft {:c [:clang-format]
                             :c++ [:clang-format]
                             :css [:prettierd]
+                            :rust [:rustfmt]
                             :fennel [:fennelfmt]
                             :clojure [:cljfmt]
                             :go [:gofumpt :golines :goimports :goimports-reviser :gomodifytags]

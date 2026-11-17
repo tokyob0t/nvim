@@ -4,8 +4,6 @@
 (local vim-mode (require :vim-mode))
 (local vim-mode-highlights (require :vim-mode-highlights))
 
-(local Severity vim.diagnostic.severity)
-
 (local EXCLUDED_BUFTYPES [:nofile :prompt :help :quickfix])
 
 (local EXCLUDED_FILETYPES [:NvimTree.*
@@ -146,10 +144,14 @@
   :update [:BufEnter :BufWinEnter :BufModifiedSet :BufWritePost :OptionSet]})
 
 (fn diagnostics []
- (let [get-severity #(length (vim.diagnostic.get 0 {:severity $}))]
+ ;; reading package.loaded keeps vim.diagnostic out of the dashboard start;
+ ;; the numbers mirror vim.diagnostic.severity for the not-loaded case
+ (let [diag (. package.loaded :vim.diagnostic)
+       severity (if diag diag.severity {:ERROR 1 :WARN 2})
+       count #(if diag (length (diag.get 0 {:severity $})) 0)]
   (doto {:init (fn [self]
-                (set self.errors (get-severity Severity.ERROR))
-                (set self.warnings (get-severity Severity.WARN)))
+                (set self.errors (count severity.ERROR))
+                (set self.warnings (count severity.WARN)))
          :update [:DiagnosticChanged :BufEnter]
          ; :condition #(let [{: has_diagnostics} (require :heirline.conditions)]
          ;              (has_diagnostics))
