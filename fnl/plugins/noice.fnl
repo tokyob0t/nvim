@@ -1,4 +1,4 @@
-(import-macros {: plugin!} :macros)
+(import-macros {: plugin! : command! : custom-set-face!} :macros)
 
 (local icons (require :icons))
 
@@ -9,7 +9,7 @@
       search-icon (.. icons.common.search " ")
       input-icon (.. icons.common.input " ")]
  (plugin! folke/noice.nvim
-  {:event :VeryLazy
+  {:event [:VeryLazy :CmdlineEnter]
    :dependencies [:MunifTanjim/nui.nvim :rcarriga/nvim-notify]
    :opts {:format {}
           :routes [{:filter {:event :notify :find :fewer} :opts {:skip true}}

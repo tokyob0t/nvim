@@ -1,7 +1,5 @@
 (import-macros {: command! : custom-set-face! : plugin!} :macros)
 
-;; notify invents titles like "Error" or "Notify" for itself; only wrap when
-;; the caller passed one of its own.
 (local default-titles [:Error :Warning :Notify])
 
 (fn split-length [line width]
@@ -28,7 +26,7 @@
   (var prefix "")
   (var prefix-length 0)
   (when manual-title?
-   (set prefix (.. " " title " "))
+   (set prefix (.. title " "))
    (when notif.duplicates
     (set prefix (.. prefix " x" (length notif.duplicates))))
    (set prefix-length (length prefix))
@@ -53,4 +51,4 @@
          (command! NotifyTest
           `(let [notify (require :notify)]
             (notify "prueba" "info" {:title "nvim-notify" :timeout 4000})) {:desc "Show a test notification"}))
-  :opts {: render}})
+  :opts {}})
