@@ -11,26 +11,20 @@
 (local destination (or (. vim.g :hotpot_cache_dir)
                     (.. (vim.fn.stdpath :data) :/site/pack/hotpot/opt/hotpot-config-cache)))
 
-(fn list-fennel-files [path]
- (let [path (.. path :/*.fnl)
-       files (vim.fn.glob path false true)]
-  (icollect [_ file (ipairs files)]
-   (if (not= file "")
-       (vim.fn.fnamemodify file ":t:r")))))
-
-(fn require-fennel-plugins []
- (let [LogLevels vim.log.levels
-       directory (.. cfg :/fnl/plugins)
-       files (list-fennel-files directory)
-       display-error #(vim.notify (.. "Failed to load plugin '" $1 "':\n" $2) LogLevels.ERROR)]
-  (icollect [_ file (ipairs files)]
-   (let [mod (.. :plugins. file)
-         (ok p) (pcall require mod)]
-    (if ok p (display-error file p))))))
-
-;; utils.specsBundle concatenates the compiled specs into one file
+;; utils.specsBundle concatenates the compiled specs into one file; the fallback
+;; requires them one by one straight from the cache, which is also the list the
+;; bundle is built from, so there is a single source of truth for what exists
 (fn list-fennel-plugins []
- (or ((. (require :utils.specsBundle) :load)) (require-fennel-plugins)))
+ (let [bundle (require :utils.specsBundle)]
+  (or (bundle.load) (let [names (bundle.names)
+                          display-error #(vim.notify (.. "Failed to load plugin '" $1 "':\n" $2) vim.log.levels.ERROR)]
+                     (if (= 0 (length names))
+                         (do
+                          (vim.notify "No compiled plugin specs, run :HotpotSync" vim.log.levels.ERROR)
+                          [])
+                         (icollect [_ mod (ipairs names)]
+                          (let [(ok? plugin) (pcall require mod)]
+                           (if ok? plugin (display-error mod plugin)))))))))
 
 (lazy.setup {:change_detection {:enabled false}
              :checker {:enabled true :notify false}

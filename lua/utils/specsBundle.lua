@@ -5,8 +5,6 @@
 -- deletes files it does not own from its own cache.
 local M = {}
 
-local uv = vim.uv or vim.loop
-
 function M.bundle_path()
     return vim.fs.joinpath(vim.fn.stdpath('cache'), 'specs-bundle.lua')
 end
@@ -26,7 +24,7 @@ local function sources()
     for name, kind in vim.fs.dir(dir) do
         if kind == 'file' and name:sub(-4) == '.lua' then
             local path = vim.fs.joinpath(dir, name)
-            local stat = uv.fs_stat(path)
+            local stat = vim.uv.fs_stat(path)
             if stat then
                 items[#items + 1] = { name = name, path = path, mtime = stat.mtime }
             end
@@ -50,7 +48,12 @@ function M.fresh()
         seen = seen + 1
         local item = items[seen]
         local name, sec, nsec = line:match('^(.-)\t(%d+)\t(%d+)$')
-        if not item or name ~= item.name or tonumber(sec) ~= item.mtime.sec or tonumber(nsec) ~= item.mtime.nsec then
+        if
+            not item
+            or name ~= item.name
+            or tonumber(sec) ~= item.mtime.sec
+            or tonumber(nsec) ~= item.mtime.nsec
+        then
             file:close()
             return false
         end
@@ -69,8 +72,10 @@ function M.build()
     for _, item in ipairs(items) do
         local modname = 'plugins.' .. item.name:gsub('%.lua$', '')
         local source = table.concat(vim.fn.readfile(item.path), '\n')
-        parts[#parts + 1] = string.format('package.preload[%q] = function(...)\n%s\nend', modname, source)
-        manifest[#manifest + 1] = string.format('%s\t%d\t%d', item.name, item.mtime.sec, item.mtime.nsec)
+        parts[#parts + 1] =
+            string.format('package.preload[%q] = function(...)\n%s\nend', modname, source)
+        manifest[#manifest + 1] =
+            string.format('%s\t%d\t%d', item.name, item.mtime.sec, item.mtime.nsec)
         names[#names + 1] = string.format('require(%q),', modname)
     end
     parts[#parts + 1] = 'return {\n' .. table.concat(names, '\n') .. '\n}\n'
@@ -84,6 +89,15 @@ function M.build()
     manifest_file:close()
 
     return true
+end
+
+--- Module names of the compiled specs, in the same order the bundle uses.
+function M.names()
+    local names = {}
+    for _, item in ipairs(sources()) do
+        names[#names + 1] = 'plugins.' .. item.name:gsub('%.lua$', '')
+    end
+    return names
 end
 
 --- The list of plugin specs, or nil when the bundle cannot be used.
