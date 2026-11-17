@@ -13,15 +13,21 @@ function M.manifest_path()
     return vim.fs.joinpath(vim.fn.stdpath('cache'), 'specs-bundle.manifest')
 end
 
+--- 'plugins.foo.bar' for 'foo/bar.lua'
+local function module_name(rel)
+    return 'plugins.' .. rel:gsub('%.lua$', ''):gsub('/', '.')
+end
+
 local function source_dir()
     return vim.fs.joinpath(require('utils.configCache').dir(), 'lua', 'plugins')
 end
 
---- Compiled specs currently in the hotpot cache, sorted by name.
+--- Compiled specs currently in the hotpot cache, sorted by path.
+--- Recursive on purpose: a spec in a subdirectory compiles to a nested .lua.
 local function sources()
     local dir = source_dir()
     local items = {}
-    for name, kind in vim.fs.dir(dir) do
+    for name, kind in vim.fs.dir(dir, { depth = 10 }) do
         if kind == 'file' and name:sub(-4) == '.lua' then
             local path = vim.fs.joinpath(dir, name)
             local stat = vim.uv.fs_stat(path)
@@ -70,7 +76,7 @@ function M.build()
 
     local parts, manifest, names = {}, {}, {}
     for _, item in ipairs(items) do
-        local modname = 'plugins.' .. item.name:gsub('%.lua$', '')
+        local modname = module_name(item.name)
         local source = table.concat(vim.fn.readfile(item.path), '\n')
         parts[#parts + 1] =
             string.format('package.preload[%q] = function(...)\n%s\nend', modname, source)
@@ -95,7 +101,7 @@ end
 function M.names()
     local names = {}
     for _, item in ipairs(sources()) do
-        names[#names + 1] = 'plugins.' .. item.name:gsub('%.lua$', '')
+        names[#names + 1] = module_name(item.name)
     end
     return names
 end
