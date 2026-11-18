@@ -1,8 +1,4 @@
-(import-macros {: plugin!} :macros)
-
-(import-macros {: let! : set!} :macros)
+(import-macros {: plugin! : let!} :macros)
 
 (plugin! lambdalisue/vim-suda
- {:event :VeryLazy
-  :init (fn []
-         (let! suda_smart_edit 1))})
+ {:cmd [:SudaRead :SudaWrite] :init (fn [] (let! suda_smart_edit 1))})

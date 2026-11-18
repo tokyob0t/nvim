@@ -6,14 +6,14 @@
  {:build #(let [download (require :fff.download)]
            (download:download_or_build_binary))
   :dependencies [:folke/snacks.nvim :nvim-treesitter/nvim-treesitter]
-  :cmd [:FFFindFiles :FFFuzzySearch :FFFindOldFiles]
+  :cmd [:FFFindFiles :FFFuzzySearch]
+  ;; commands must be defined in :config, not :init: lazy deletes its own stubs
+  ;; when the plugin loads, and a command created in :init shares the name
   :config (fn [_ opts]
            (let [fff (require :fff)]
             (fff.setup opts)
             (command! FFFindFiles `(fff.find_files {:title "Find Files"}))
             (command! FFFuzzySearch `(fff.live_grep {:title "Live Grep"}))
-            (command! FFFindOldFiles (fn []) {:desc "Find Old Files"})
-            ;; ToDo
             (custom-set-face! :FFFNormalTransparent [] {:bg :NONE})
             (custom-set-face! :FFFRed [] {:fg :red :bg :NONE})))
   :keys [[:<leader>. :<cmd>FFFindFiles<CR>] ["<leader>," :<cmd>FFFuzzySearch<CR>]]
@@ -58,7 +58,6 @@
               :file_info_total_score :Bold
               :file_info_type :Type
               :file_info_value :TelescopeNormal
-              :file_info_value_dim :FFFRed
               :frecency :Number
               :git_deleted :DiffRemoved
               :git_ignored :FFFNormalTransparent
@@ -79,10 +78,11 @@
               :git_sign_staged_selected :TelescopeSelection
               :git_sign_untracked :NonText
               :git_sign_untracked_selected :TelescopeSelection
+              ;;
               :grep_fuzzy_active :DiagnosticHint
               :grep_line_number :LineNr
               :grep_match :TelescopeMatching
-              :grep_plain_active :Comment
+              :grep_plain_active :FFFNormalTransparent
               :grep_regex_active :DiagnosticInfo
               :matched :TelescopeMatching
               :normal :TelescopeNormal

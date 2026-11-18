@@ -33,6 +33,7 @@
 ;; loads the profiler early so its VimEnter/UIEnter hooks are registered
 ;; before the dashboard asks for the numbers
 (require :modules.profile)
+(require :modules.hotpot)
 
 (require :modules.lazy)
 (require :modules.settings)

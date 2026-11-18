@@ -3,9 +3,6 @@ if vim.g.vscode then
 end
 
 require('utils.startupProfile').install()
-
-local installPlugin = require('utils.installPlugin')
-
-installPlugin('hotpot', 'rktjmp/hotpot.nvim', 'main')
+require('utils.hotpotBoot').setup()
 
 require('modules')

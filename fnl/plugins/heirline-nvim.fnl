@@ -4,8 +4,6 @@
 (local vim-mode (require :vim-mode))
 (local vim-mode-highlights (require :vim-mode-highlights))
 
-(local Severity vim.diagnostic.severity)
-
 (local EXCLUDED_BUFTYPES [:nofile :prompt :help :quickfix])
 
 (local EXCLUDED_FILETYPES [:NvimTree.*
@@ -41,33 +39,32 @@
              (.. (string.rep " " pad) title (string.rep " " pad)))})
 
 (fn buffers []
- (let [redrawtabline (vim.schedule_wrap vim.cmd.redrawtabline)
-       tabline (doto {:init (fn [self]
-                             (set self.filename (vim.api.nvim_buf_get_name self.bufnr)))
-                      :hl (fn [{: is_active}]
-                           (if is_active :TabLineSel :TabLine))}
-                (tset 1 {:hl (fn [self]
-                              {:bold (or self.is_active self.is_visible)})
-                         :init (fn [self]
-                                (set self.lfilename (vim.fn.pathshorten (vim.fn.fnamemodify self.filename ":.")))
-                                (when (= self.lfilename "")
-                                 (set self.lfilename "No Name")))
-                         :provider (fn [self] (.. " [" self.lfilename "] "))})
-                (tset 2 {:condition (fn [{: bufnr}]
-                                     (vim.api.nvim_get_option_value :modified {:buf bufnr}))
-                         :provider (.. icons.tree.git.untracked "  ")}))]
-  {:init (fn [self]
+ (let [{: pathshorten : fnamemodify : bufname} vim.fn]
+  {:init (fn [{: bufferline &as self}]
           (let [{: make_buflist} (require :heirline.utils)]
-           (set self.bufferline (self:new (make_buflist tabline) 1))))
-   :provider (fn [self] (self.bufferline:eval))}))
+           (set self.bufferlines (self:new (make_buflist bufferline) 1))))
+   :provider (fn [{: bufferlines}] (bufferlines:eval))
+   :static {:bufferline {:init (fn [{: bufnr &as self}]
+                                (set self.filename (pathshorten (fnamemodify (bufname bufnr) ":.")))
+                                (when (= self.filename "")
+                                 (set self.filename "No Name")))
+                         :hl (fn [{: is_active}]
+                              (if is_active :TabLineSel :TabLine))
+                         1 {:provider #(.. " [" $.filename "] ")
+                            :hl (fn [{: is_active : is_visible}]
+                                 {:bold (or is_active is_visible)})}
+                         2 {:provider (.. icons.tree.git.untracked "  ")
+                            :condition (fn [{: bufnr}]
+                                        (. vim.bo bufnr :modified))}}}}))
 
 ;; winbar components
 
 ;; only ask for navic and devicons when there is something to show: reading
 ;; package.loaded.vim.lsp avoids pulling vim.lsp in on the dashboard
 (fn lsp-clients? []
- (let [lsp (. package.loaded :vim.lsp)]
-  (and lsp (> (length (lsp.get_clients {:bufnr 0})) 0))))
+ (let [lsp (. package.loaded :vim.lsp)
+       clients (if lsp (lsp.get_clients {:bufnr 0}) [])]
+  (> (length clients) 0)))
 
 (fn navic []
  (doto {:init (fn [self]
@@ -75,9 +72,8 @@
                      extension (vim.fn.fnamemodify filename ":e")]
                 (set [self.filename self.extension] [filename extension])
                 (when (not= filename "")
-                 (let [devicons (require :nvim-web-devicons)
-                       (icon icon-color) (devicons.get_icon_color filename extension)]
-                  (set [self.icon self.icon-color] [icon icon-color])))))
+                 (let [devicons (require :nvim-web-devicons)]
+                  (set (self.icon self.icon-color) (devicons.get_icon_color filename extension))))))
         :hl "Normal"}
   (tset 1 {:hl (fn [{: icon-color}] {:fg icon-color})
            :provider (fn [{: icon}]
@@ -88,15 +84,16 @@
   (tset 3 {:hl "NavicSeparator"
            :update "CursorMoved"
            :provider (.. icons.common.chevron_right " ")
-           :condition #(let [navic (and (lsp-clients?) (require :nvim-navic))]
-                        (if navic
-                            (and (navic.is_available) (> (length (navic.get_location)) 0))
-                            false))})
+           :condition #(let [navic (if (lsp-clients?) (require :nvim-navic))
+                             available? (if navic (navic.is_available))
+                             location (if available? (navic.get_location))]
+                        (and available? (> (length location) 0)))})
   (tset 4 {:update "CursorMoved"
-           :provider #(let [navic (and (lsp-clients?) (require :nvim-navic))]
-                       (if navic (or (navic.get_location {:highlight true}) "") ""))
-           :condition #(let [navic (and (lsp-clients?) (require :nvim-navic))]
-                        (if navic (navic.is_available) false))})))
+           :provider #(let [navic (if (lsp-clients?) (require :nvim-navic))]
+                       (if navic (navic.get_location {:highlight true})))
+           :condition #(let [navic (if (lsp-clients?) (require :nvim-navic))
+                             available? (if navic (navic.is_available))]
+                        available?)})))
 
 ;; statusline components
 
@@ -147,10 +144,14 @@
   :update [:BufEnter :BufWinEnter :BufModifiedSet :BufWritePost :OptionSet]})
 
 (fn diagnostics []
- (let [get-severity #(length (vim.diagnostic.get 0 {:severity $}))]
+ ;; reading package.loaded keeps vim.diagnostic out of the dashboard start;
+ ;; the numbers mirror vim.diagnostic.severity for the not-loaded case
+ (let [diag (. package.loaded :vim.diagnostic)
+       severity (if diag diag.severity {:ERROR 1 :WARN 2})
+       count #(if diag (length (diag.get 0 {:severity $})) 0)]
   (doto {:init (fn [self]
-                (set self.errors (get-severity Severity.ERROR))
-                (set self.warnings (get-severity Severity.WARN)))
+                (set self.errors (count severity.ERROR))
+                (set self.warnings (count severity.WARN)))
          :update [:DiagnosticChanged :BufEnter]
          ; :condition #(let [{: has_diagnostics} (require :heirline.conditions)]
          ;              (has_diagnostics))
@@ -194,19 +195,17 @@
          (not (buffer_matches {:filetype excluded_filetypes :buftype excluded-buftypes}))))))))
 
 (plugin! rebelot/heirline.nvim
- {:dependencies [:SmiteshP/nvim-navic]
-  :event :UiEnter
-  :init #(let [{: nvim_get_option_value} vim.api
-               redrawtabline (vim.schedule_wrap vim.cmd.redrawtabline)
+ {:event :UiEnter
+  :init #(let [redrawtabline (vim.schedule_wrap vim.cmd.redrawtabline)
                count-buffers #(length (icollect [_ buf (ipairs (vim.api.nvim_list_bufs))]
-                                       (if (nvim_get_option_value :buflisted {: buf})
+                                       (if (. vim.bo buf :buflisted)
                                            buf)))]
           (set! showtabline 0)
           (autocmd! [BufEnter TabEnter BufAdd BufDelete BufModifiedSet BufWritePost] *
            `(do
              (set! showtabline (if (>= (count-buffers) 2) 2 0))
              (redrawtabline))))
-  :opts {:tabline (Bar []   ;
+  :opts {:tabline (Bar {}   ;
                    (offset) ;
                    (buffers))
          :winbar (Bar {:excluded-filetypes EXCLUDED_FILETYPES} ;

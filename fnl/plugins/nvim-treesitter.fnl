@@ -8,7 +8,6 @@
          (autocmd! FileType * `(do
                                 (pcall vim.treesitter.start)
                                 nil)))
-  :config (fn []
-           (let [ts (require :nvim-treesitter)
+  :config #(let [ts (require :nvim-treesitter)
                  parsers (require :parsers)]
-            (ts.install parsers)))})
+            (ts.install parsers))})

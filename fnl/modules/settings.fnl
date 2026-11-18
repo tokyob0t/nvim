@@ -3,7 +3,7 @@
 ;; mason owns the LSP binaries but loads lazily now, so put them on PATH here
 (let [bin (.. (vim.fn.stdpath :data) :/mason/bin)]
  (when (= 1 (vim.fn.isdirectory bin))
-  (set vim.env.PATH (.. bin ":" (. vim.env :PATH)))))
+  (let! [env] PATH (.. bin ":" (. vim.env :PATH)))))
 
 (set! updatetime 250)
 (set! timeoutlen 400)
