@@ -3,19 +3,19 @@
 (local icons (require :icons))
 
 (fn button [label sc ?keybind]
- (let [sc- (: (sc:gsub "%s" "") :gsub :SPC :<leader>)]
+ (let [sc (: (sc:gsub "%s" "") :gsub :SPC :<leader>)]
   {:type :button
    :val label
    :opts {:align_shortcut :right
           :cursor 5
           :hl :AlphaButtons
           :keymap (if ?keybind
-                      [:n sc- ?keybind {:noremap true :silent true}])
+                      [:n sc ?keybind {:noremap true :silent true}])
           :position :center
           :shortcut sc
           :text label
           :width 36}
-   :on_press #(let [key (vim.api.nvim_replace_termcodes sc- true false true)]
+   :on_press #(let [key (vim.api.nvim_replace_termcodes sc true false true)]
                (vim.api.nvim_feedkeys key :normal false))}))
 
 (local default

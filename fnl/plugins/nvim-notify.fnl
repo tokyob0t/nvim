@@ -51,4 +51,4 @@
          (command! NotifyTest
           `(let [notify (require :notify)]
             (notify "prueba" "info" {:title "nvim-notify" :timeout 4000})) {:desc "Show a test notification"}))
-  :opts {}})
+  :opts {:render :wrapped-compact}})
